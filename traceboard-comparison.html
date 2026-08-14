@@ -560,7 +560,20 @@
       .section { padding: 52px 0; }
       .cta-bar { padding: 32px 20px; }
     }
-  </style>
+  
+  /* ---------- Model compatibility & data freedom ---------- */
+  .trust-grid{ display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:36px; }
+  .trust-card{ background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--accent); border-radius:8px; padding:28px 26px; }
+  .trust-card h3{ font-family:'Space Grotesk', sans-serif; font-size:19px; font-weight:600; color:var(--text); margin:0 0 12px; letter-spacing:-0.01em; }
+  .trust-card p{ font-size:15px; color:var(--text-muted); margin:0 0 14px; line-height:1.7; }
+  .trust-card ul{ margin:0 0 0 20px; }
+  .trust-card li{ font-size:14.5px; color:var(--text-muted); margin-bottom:8px; line-height:1.7; }
+  .trust-card li:last-child{ margin-bottom:0; }
+  .trust-card strong{ color:var(--text); font-weight:600; }
+  .trust-card .note{ font-style:italic; font-size:13.5px; color:var(--text-faint); }
+  @media (max-width:680px){ .trust-grid{ grid-template-columns:1fr; } }
+
+</style>
 </head>
 <body>
 
@@ -848,6 +861,39 @@
     </article>
   </div>
 </section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-label">Model Compatibility &amp; Data Freedom</div>
+    <h2 class="section-title">Your models. Your data.</h2>
+    <p class="section-sub">TraceBoard Suite adapts to virtually any LLM and keeps your compliance data portable — no proprietary lock-in.</p>
+
+    <div class="trust-grid">
+
+    <div class="trust-card">
+      <h3>Broad LLM Compatibility</h3>
+      <p>The TraceBoard Suite is engineered to work with virtually any Large Language Model. Whether you require a tiny 3B parameter model running locally on a low-power device, or a 1.6 trillion parameter model from a cloud provider, the architecture adapts seamlessly.</p>
+      <ul>
+        <li><strong>Local (air-gapped):</strong> supports Ollama, LM Studio, and any OpenAI-compatible local server.</li>
+        <li><strong>Cloud:</strong> natively supports Mistral AI, OpenAI, Anthropic, DeepSeek, and any provider with an OpenAI-compatible API endpoint.</li>
+      </ul>
+      <p class="note">Smaller models (≤7B) may produce less detailed narratives, while larger models provide deeper insights — giving you full control over the trade-off between cost, latency, and quality.</p>
+    </div>
+
+    <div class="trust-card">
+      <h3>Commitment to Data Freedom</h3>
+      <p>At TraceBoard, we believe your compliance data is yours, not ours. We explicitly do not use proprietary binary formats or encrypted data stores.</p>
+      <ul>
+        <li><strong>Open Standards:</strong> all import/export relies on JSON, PDF, SQL, and DOCX.</li>
+        <li><strong>Full Database Access:</strong> you have full access to your PostgreSQL database.</li>
+        <li><strong>Zero Lock-In:</strong> you are free to export your entire project — requirements, tests, tasks, and traceability links — at any time, without requiring our assistance.</li>
+      </ul>
+    </div>
+
+  </div>
+  </div>
+</section>
+
 
 <section class="closing">
   <h2>See where the line actually sits.</h2>

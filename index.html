@@ -867,6 +867,43 @@
     *{ transition:none !important; scroll-behavior:auto !important; }
     .modal{ animation:none; }
   }
+
+  /* ---------- Model compatibility & data freedom ---------- */
+  .trust{ padding:72px 24px; border-top:1px solid var(--hairline); background:var(--paper-raised); }
+  .trust-head{ text-align:center; max-width:640px; margin:0 auto 48px; }
+  .trust-head h2{
+    font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    font-size:clamp(24px, 3.5vw, 34px);
+    margin:0 0 12px;
+  }
+  .trust-head p{ color:var(--slate); margin:0; }
+  .trust-grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:32px;
+    max-width:var(--max-width);
+    margin:0 auto;
+  }
+  .trust-card{
+    background:var(--paper);
+    border:1px solid var(--hairline);
+    border-left:4px solid var(--blue);
+    padding:28px 32px;
+  }
+  .trust-card h3{
+    font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    font-size:18px;
+    margin:0 0 12px;
+  }
+  .trust-card p{ color:var(--slate); font-size:14px; margin:0 0 12px; }
+  .trust-card ul{ margin:0; padding-left:18px; }
+  .trust-card li{ color:var(--slate); font-size:14px; margin:0 0 8px; }
+  .trust-card li:last-child{ margin-bottom:0; }
+  .trust-card .note{ font-style:italic; }
+  @media (max-width:900px){
+    .trust-grid{ grid-template-columns:1fr; }
+  }
+
 </style>
 </head>
 <body>
@@ -1659,7 +1696,7 @@
     <div class="get-started-card">
       <h3>TraceBoard Suite Package</h3>
       <p>Download the Docker Compose stack. Deploy on your own server in minutes — your data stays on your infrastructure.</p>
-      <a class="btn btn-primary" href="https://demo.traceboardsuite.com/downloads/traceboard-suite-v1.1.0.zip">Download TraceBoard Suite</a>
+      <a class="btn btn-primary" href="https://pub-bfa76a63896f4bc7a2166f9db8dcb8e1.r2.dev/traceboard-suite-v1.1.0.zip">Download TraceBoard Suite</a>
     </div>
 
   </div>
@@ -1835,6 +1872,40 @@
         </tr>
       </tbody>
     </table>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- MODEL COMPATIBILITY & DATA FREEDOM -->
+<!-- ═══════════════════════════════════════════════ -->
+<section class="trust">
+  <div class="trust-head">
+    <h2>Your models. Your data.</h2>
+    <p>TraceBoard Suite adapts to virtually any LLM and keeps your compliance data portable — no proprietary lock-in.</p>
+  </div>
+
+  <div class="trust-grid">
+
+    <div class="trust-card">
+      <h3>Broad LLM Compatibility</h3>
+      <p>The TraceBoard Suite is engineered to work with virtually any Large Language Model. Whether you require a tiny 3B parameter model running locally on a low-power device, or a 1.6 trillion parameter model from a cloud provider, the architecture adapts seamlessly.</p>
+      <ul>
+        <li><strong>Local (air-gapped):</strong> supports Ollama, LM Studio, and any OpenAI-compatible local server.</li>
+        <li><strong>Cloud:</strong> natively supports Mistral AI, OpenAI, Anthropic, DeepSeek, and any provider with an OpenAI-compatible API endpoint.</li>
+      </ul>
+      <p class="note">Smaller models (≤7B) may produce less detailed narratives, while larger models provide deeper insights — giving you full control over the trade-off between cost, latency, and quality.</p>
+    </div>
+
+    <div class="trust-card">
+      <h3>Commitment to Data Freedom</h3>
+      <p>At TraceBoard, we believe your compliance data is yours, not ours. We explicitly do not use proprietary binary formats or encrypted data stores.</p>
+      <ul>
+        <li><strong>Open Standards:</strong> all import/export relies on JSON, PDF, SQL, and DOCX.</li>
+        <li><strong>Full Database Access:</strong> you have full access to your PostgreSQL database.</li>
+        <li><strong>Zero Lock-In:</strong> you are free to export your entire project — requirements, tests, tasks, and traceability links — at any time, without requiring our assistance.</li>
+      </ul>
+    </div>
+
   </div>
 </section>
 
@@ -2092,7 +2163,7 @@
 
     <h3>Other Channels</h3>
     <p>
-      Follow development and releases on <a href="https://github.com/ristojarnstrom-gif/traceboard-site" target="_blank" rel="noopener noreferrer">GitHub</a>.
+      Follow development and releases on <a href="https://github.com/nordtrace/traceboard-site" target="_blank" rel="noopener noreferrer">GitHub</a>.
     </p>
 
     <p class="modal-muted">We typically respond within one business day (EET/EEST timezone).</p>

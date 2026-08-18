@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>TraceBoard Suite — Self‑hosted traceability, documents & test execution</title>
-<meta name="description" content="Streamline engineering compliance with TraceBoard Suite. A high-performance, modular ALM tool for end-to-end requirements management and deterministic traceability.">
+<title>TraceBoard Suite — Self‑hosted hazard-to-test traceability for regulated software</title>
+<meta name="description" content="Self-hosted hazard-to-test traceability for regulated software. TraceBoard Suite links hazards, risks, requirements, tasks and tests into one auditable chain — with citation-validated AI audit narratives and native PDF & Word export, air-gap ready.">
 <link rel="icon" type="image/png" href="traceboard.png">
 <style>
   :root{
@@ -175,7 +175,7 @@
   }
   .who-uses-grid{
     display:grid;
-    grid-template-columns:repeat(3, 1fr);
+    grid-template-columns:repeat(4, 1fr);
     gap:32px;
     max-width:var(--max-width);
     margin:0 auto;
@@ -904,6 +904,138 @@
     .trust-grid{ grid-template-columns:1fr; }
   }
 
+  /* ---------- Hero standards banner ---------- */
+  .standards-banner{
+    margin:26px 0 0;
+    font-family:'Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace;
+    font-size:12px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--slate-light);
+  }
+  .standards-banner strong{ color:var(--ink); font-weight:600; }
+
+  /* ---------- Who uses (4-col responsive) ---------- */
+  @media (max-width:1000px){
+    .who-uses-grid{ grid-template-columns:repeat(2, 1fr); }
+  }
+  @media (max-width:560px){
+    .who-uses-grid{ grid-template-columns:1fr; }
+  }
+  .who-card .tag{
+    display:inline-block;
+    margin-top:14px;
+    font-family:'Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace;
+    font-size:11px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--slate);
+    border:1px solid var(--hairline-strong);
+    border-radius:2px;
+    padding:3px 8px;
+  }
+
+  /* ---------- Hazard-to-Test chain ---------- */
+  .trace-chain-section{ padding:72px 24px; border-top:1px solid var(--hairline); background:var(--paper-raised); }
+  .trace-chain-head{ max-width:720px; margin:0 auto 48px; text-align:center; }
+  .trace-chain-head h2{
+    font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    font-size:clamp(24px, 3.5vw, 34px);
+    margin:0 0 12px;
+  }
+  .trace-chain-head p{ color:var(--slate); margin:0; }
+  .trace-chain{
+    display:flex;
+    align-items:stretch;
+    justify-content:center;
+    gap:12px;
+    max-width:var(--max-width);
+    margin:0 auto;
+  }
+  .trace-step{
+    flex:1 1 0;
+    min-width:0;
+    background:var(--paper);
+    border:1px solid var(--hairline);
+    border-top:3px solid var(--hairline-strong);
+    padding:24px 16px;
+    text-align:center;
+  }
+  .trace-step .step-badge{
+    display:inline-block;
+    font-family:'Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace;
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    padding:3px 10px;
+    border-radius:2px;
+    margin-bottom:12px;
+    background:var(--paper-raised);
+    border:1px solid var(--hairline);
+    color:var(--slate);
+  }
+  .trace-step h3{ font-size:16px; font-weight:700; margin:0 0 8px; }
+  .trace-step p{ color:var(--slate); font-size:13px; margin:0; }
+  .trace-arrow{
+    align-self:center;
+    flex:0 0 auto;
+    color:var(--hairline-strong);
+    font-family:'Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace;
+    font-size:18px;
+  }
+  @media (max-width:900px){
+    .trace-chain{ flex-direction:column; }
+    .trace-arrow{ display:none; }
+  }
+
+  /* ---------- AI Audit Pipeline ---------- */
+  .ai-audit{ padding:72px 24px; border-top:1px solid var(--hairline); }
+  .ai-audit-head{ max-width:760px; margin:0 auto 48px; text-align:center; }
+  .ai-audit-head h2{
+    font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    font-size:clamp(24px, 3.5vw, 34px);
+    margin:0 0 12px;
+  }
+  .ai-audit-head p{ color:var(--slate); margin:0; }
+  .ai-pipeline{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:16px;
+    max-width:var(--max-width);
+    margin:0 auto;
+  }
+  .ai-step{
+    background:var(--paper-raised);
+    border:1px solid var(--hairline);
+    padding:24px 20px;
+  }
+  .ai-step .step-num{
+    font-family:'Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace;
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--blue);
+    margin:0 0 8px;
+  }
+  .ai-step h3{ font-size:16px; font-weight:700; margin:0 0 8px; }
+  .ai-step p{ color:var(--slate); font-size:13px; margin:0; }
+  .ai-audit .learn-more{
+    display:block;
+    text-align:center;
+    margin-top:28px;
+    font-family:'Cascadia Code','Fira Code','JetBrains Mono','Consolas',monospace;
+    font-size:13px;
+    color:var(--blue);
+    text-decoration:none;
+  }
+  .ai-audit .learn-more:hover{ text-decoration:underline; }
+  @media (max-width:900px){
+    .ai-pipeline{ grid-template-columns:repeat(2, 1fr); }
+  }
+  @media (max-width:560px){
+    .ai-pipeline{ grid-template-columns:1fr; }
+  }
+
 </style>
 </head>
 <body>
@@ -930,17 +1062,15 @@
 <header class="hero">
   <div class="hero-grid">
     <div>
-      <p class="eyebrow">Requirements, Documents, and Tests — one self-hosted suite</p>
+      <p class="eyebrow">Air-Gap Ready · Fully Self-Hosted</p>
 
 		<h1>
-		Traceability, documents, and test execution — all in one suite.
+		Self-Hosted Hazard-to-Test Traceability for Regulated Software
 		</h1>
 
-		<p class="lead">
-		TraceBoard Suite combines requirements traceability (TraceBoard), 
-		document generation from baselines (TraceDocs), and test execution 
-		with coverage reporting (TraceTest) — without per‑user pricing or cloud lock‑in.
-		</p>
+      <p class="lead">
+        Eliminate compliance overhead with deterministic, end-to-end traceability across your entire development lifecycle — without sending sensitive engineering data to external clouds.
+      </p>
 		<p class="lead">
 		Built for engineering teams in medical devices, 
 		industrial automation, defense, aerospace, embedded software, 
@@ -948,8 +1078,9 @@
 		</p>
       <div class="cta-row">
         <a class="btn btn-primary" href="https://demo.traceboardsuite.com/board/" target="_blank" rel="noopener noreferrer">Try the live demo</a>
-        <a class="btn" href="#pricing">See pricing</a>
+        <a class="btn" href="mailto:sales@traceboardsuite.com?subject=Activation%20Request">Request activation</a>
       </div>
+      <p class="standards-banner"><strong>IEC 62304</strong> · <strong>ISO 26262</strong> · <strong>DO-178C</strong> · <strong>ISO 14971</strong></p>
     </div>
 
     <div class="hero-visual" aria-hidden="true">
@@ -1022,6 +1153,12 @@
       <p>Need clear evidence that every requirement was implemented and verified.</p>
     </div>
 
+    <div class="who-card">
+      <h3>Safety &amp; risk engineering teams</h3>
+      <p>Regulatory affairs and quality leads performing formal hazard and risk analysis — live hazard logs, FMEA/PHA, and risk-mitigation coverage down to the executing test.</p>
+      <span class="tag">ISO 14971 · FMEA · Risk Matrices</span>
+    </div>
+
   </div>
   <p style="max-width:640px; margin:24px auto 0; text-align:center; color:var(--slate); font-size:14px;">TraceDocs, TraceTest, and the full suite serve the same audience — choose the tier that matches your team's needs.</p>
 </section>
@@ -1058,6 +1195,48 @@
       <img src="TraceTest.png" alt="TraceTest – test runs and coverage reporting" style="width:100%; border:1px solid var(--hairline); border-radius:4px;" />
     </div>
 
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- HAZARD-TO-TEST TRACEABILITY                      -->
+<!-- ═══════════════════════════════════════════════ -->
+<section class="trace-chain-section" id="traceability">
+  <div class="trace-chain-head">
+    <p class="section-eyebrow">End-to-end traceability</p>
+    <h2>Complete Hazard-to-Test Traceability</h2>
+    <p>Maintain unbroken, verifiable audit chains across every stage of safety-critical software engineering — from first hazard to passing test.</p>
+  </div>
+  <div class="trace-chain">
+    <div class="trace-step" style="border-top-color:var(--red);">
+      <span class="step-badge" style="background:#fef2f2;color:var(--red);border-color:#fecaca;">01 · Hazard</span>
+      <h3>Identify Hazard</h3>
+      <p>Capture system failure modes, environmental risks, and operational hazards.</p>
+    </div>
+    <div class="trace-arrow" aria-hidden="true">→</div>
+    <div class="trace-step" style="border-top-color:var(--amber);">
+      <span class="step-badge" style="background:#fef5ec;color:var(--amber);border-color:#fde0c2;">02 · Risk</span>
+      <h3>Assess Risk</h3>
+      <p>Classify severity and probability, and assign required safety levels (SIL/ASIL).</p>
+    </div>
+    <div class="trace-arrow" aria-hidden="true">→</div>
+    <div class="trace-step" style="border-top-color:var(--blue);">
+      <span class="step-badge" style="background:#eef3fa;color:var(--blue);border-color:#c8d8ec;">03 · Requirement</span>
+      <h3>Define Controls</h3>
+      <p>Derive functional safety mitigations and software requirements that trace back to each risk.</p>
+    </div>
+    <div class="trace-arrow" aria-hidden="true">→</div>
+    <div class="trace-step" style="border-top-color:var(--ink);">
+      <span class="step-badge" style="background:#eef0f3;color:var(--ink);border-color:#d5dae1;">04 · Task</span>
+      <h3>Implement</h3>
+      <p>Bind development tasks, commits, and pull requests directly to the controls.</p>
+    </div>
+    <div class="trace-arrow" aria-hidden="true">→</div>
+    <div class="trace-step" style="border-top-color:var(--green);">
+      <span class="step-badge" style="background:#ecfdf5;color:var(--green);border-color:#b7ebd4;">05 · Test</span>
+      <h3>Verify &amp; Validate</h3>
+      <p>Link test executions and export compliance evidence — every requirement proven in the record.</p>
+    </div>
   </div>
 </section>
 
@@ -1126,6 +1305,40 @@
       .pillars-grid{ grid-template-columns:repeat(4, 1fr); }
     }
   </style>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- AI AUDIT PIPELINE                                -->
+<!-- ═══════════════════════════════════════════════ -->
+<section class="ai-audit" id="ai-audit">
+  <div class="ai-audit-head">
+    <p class="section-eyebrow">Deterministic AI engine</p>
+    <h2>Citation-Validated AI Audit Pipeline</h2>
+    <p>Streamline compliance evidence generation without exposing IP or relying on black-box predictions. TraceBoard Suite uses a deterministic Propose → Validate → Approve → Commit workflow to produce audit-ready narratives.</p>
+  </div>
+  <div class="ai-pipeline">
+    <div class="ai-step">
+      <p class="step-num">01 · Propose</p>
+      <h3>Propose</h3>
+      <p>Local LLMs draft compliance summaries, change-impact reports, and traceability rationales.</p>
+    </div>
+    <div class="ai-step">
+      <p class="step-num">02 · Validate</p>
+      <h3>Validate</h3>
+      <p>Deterministic rules verify every statement against explicit database links, flagging hallucinated or uncited claims.</p>
+    </div>
+    <div class="ai-step">
+      <p class="step-num">03 · Approve</p>
+      <h3>Approve</h3>
+      <p>Human-in-the-loop safety leads review, edit, and sign off on all generated compliance artifacts.</p>
+    </div>
+    <div class="ai-step">
+      <p class="step-num">04 · Commit</p>
+      <h3>Commit</h3>
+      <p>Final validated evidence is locked into an immutable, exportable audit-trail package.</p>
+    </div>
+  </div>
+  <a class="learn-more" href="case-study.html">Read the case study: how this caught a silent traceability bug →</a>
 </section>
 
 <!-- ═══════════════════════════════════════════════ -->
@@ -1208,6 +1421,37 @@
 				<path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2"/>
 			  </svg>
 			  <span class="status primary">Automatic trace graph</span>
+			</div>
+		  </td>
+		</tr>
+
+		<tr>
+		  <td>Hazard → Risk → Requirement → Task → Test traceability</td>
+
+		  <td>
+			<div class="compare-cell">
+			  <svg class="icon no" viewBox="0 0 24 24" fill="none">
+				<path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2"/>
+			  </svg>
+			  <span class="status muted">Manual only</span>
+			</div>
+		  </td>
+
+		  <td>
+			<div class="compare-cell">
+			  <svg class="icon warn" viewBox="0 0 24 24" fill="none">
+				<path d="M12 2l10 18H2L12 2z" stroke="currentColor" stroke-width="2"/>
+			  </svg>
+			  <span class="status muted">Plugins required</span>
+			</div>
+		  </td>
+
+		  <td class="col-tb">
+			<div class="compare-cell">
+			  <svg class="icon ok" viewBox="0 0 24 24" fill="none">
+				<path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2"/>
+			  </svg>
+			  <span class="status primary">Built-in typed chain</span>
 			</div>
 		  </td>
 		</tr>
@@ -1543,7 +1787,7 @@
   <div class="pricing-head">
     <p class="section-eyebrow">05 — Pricing</p>
     <h2>Simple pricing for software that stays simple.</h2>
-    <p>Starter includes the TraceBoard requirements engine. Professional adds document generation (TraceDocs). Team adds test execution and coverage (TraceTest), plus SSO. Business adds larger user limits and priority support. All plans include advanced reporting, Git integration, and CI/CD API support. Choose how you want to run it.</p>
+    <p>Starter includes the TraceBoard requirements engine. Professional adds document generation (TraceDocs). Team adds test execution and coverage (TraceTest), plus SSO. Business adds larger user limits and priority support. All plans include advanced reporting, Git integration, and CI/CD API support. Choose how you want to run it. Prices are published up front — activation is one short call, not a hidden quote.</p>
   </div>
 
   <div class="pricing-toggle-row">
@@ -1576,7 +1820,7 @@
       <p class="tier-sub">Up to 5 users</p>
       <p class="tier-desc">Core traceability – requirements, tasks, bugs, tests, Kanban, baselines, and Excel import/export. No SSO.</p>
       <p class="tier-include">TraceBoard only</p>
-      <a class="btn btn-primary" href="mailto:sales@traceboardsuite.com?subject=Starter%20License%20Request">Request a quote</a>
+      <a class="btn btn-primary" href="mailto:sales@traceboardsuite.com?subject=Starter%20Activation%20Request">Request activation</a>
     </div>
 
     <div class="card">
@@ -1587,7 +1831,7 @@
       <p class="tier-sub">Up to 15 users</p>
       <p class="tier-desc">Everything in Starter, plus document generation (SRS, Test Plans), Markdown editor, and folders. No SSO.</p>
       <p class="tier-include">TraceBoard + TraceDocs (Early Access) · all future updates included</p>
-      <a class="btn" href="mailto:sales@traceboardsuite.com?subject=Professional%20License%20Request">Request a quote</a>
+      <a class="btn" href="mailto:sales@traceboardsuite.com?subject=Professional%20Activation%20Request">Request activation</a>
     </div>
 
     <div class="card">
@@ -1598,7 +1842,7 @@
       <p class="tier-sub">Up to 40 users</p>
       <p class="tier-desc">Everything in Professional, plus test execution (TraceTest), coverage reporting, and SSO (OIDC).</p>
       <p class="tier-include">TraceBoard + TraceDocs + TraceTest (Early Access) · SSO · priority support & onboarding</p>
-      <a class="btn" href="mailto:sales@traceboardsuite.com?subject=Team%20License%20Request">Request a quote</a>
+      <a class="btn" href="mailto:sales@traceboardsuite.com?subject=Team%20Activation%20Request">Request activation</a>
     </div>
 
 	<div class="card">
@@ -1608,7 +1852,7 @@
       <p class="tier-sub">Up to 100 users</p>
       <p class="tier-desc">Full suite with all features, SSO, priority support, and dedicated onboarding. For organisations that demand full governance.</p>
       <p class="tier-include">Full Suite · SSO · priority support & onboarding</p>
-      <a class="btn" href="mailto:sales@traceboardsuite.com?subject=Business%20License%20Request">Request a quote</a>
+      <a class="btn" href="mailto:sales@traceboardsuite.com?subject=Business%20Activation%20Request">Request activation</a>
       <p style="font-size:12px; color:var(--slate-light); margin-top:-6px;">Need more than 100 users? See our Enterprise tier below.</p>
     </div>
 
@@ -1921,7 +2165,7 @@
 
   <details>
     <summary>What does "Early Access" mean for TraceDocs and TraceTest?</summary>
-    <p>TraceDocs and TraceTest are fully functional and ready for daily use. We are actively adding new features (custom templates, Word export, evidence management) based on customer feedback. By purchasing Professional or Team today, you lock in the current price and receive all future updates at no additional cost.</p>
+    <p>TraceDocs and TraceTest are fully functional and ready for daily use. Native PDF and Word (.docx) export are already live in TraceDocs, and TraceTest exports PDF test-run reports with attached evidence. We are actively adding new features (such as user-defined custom templates) based on customer feedback. By purchasing Professional or Team today, you lock in the current price and receive all future updates at no additional cost.</p>
   </details>
 
   <details>
@@ -2214,6 +2458,12 @@
       openModal(link.dataset.modal);
     });
   });
+
+  /* Open a modal when arriving from a deep link (e.g. index.html#privacy) */
+  const hashToModal = { '#privacy':'modal-privacy', '#terms':'modal-terms', '#contact':'modal-contact' };
+  if(location.hash && hashToModal[location.hash]){
+    openModal(hashToModal[location.hash]);
+  }
 
   document.querySelectorAll('.modal-overlay').forEach(overlay => {
     overlay.addEventListener('click', e => {

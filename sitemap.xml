@@ -15,6 +15,18 @@
        <priority>0.6400</priority>
   </url>
   <url>
+       <loc>https://traceboardsuite.com/traceboard-features</loc>
+       <lastmod>2026-09-09T00:00:00+00:00</lastmod>
+       <changefreq>weekly</changefreq>
+       <priority>0.7000</priority>
+  </url>
+  <url>
+       <loc>https://traceboardsuite.com/traceboard-tco</loc>
+       <lastmod>2026-09-09T00:00:00+00:00</lastmod>
+       <changefreq>weekly</changefreq>
+       <priority>0.5500</priority>
+  </url>
+  <url>
        <loc>https://traceboardsuite.com/resources</loc>
        <lastmod>2026-07-29T17:53:00+00:00</lastmod>
        <changefreq>daily</changefreq>

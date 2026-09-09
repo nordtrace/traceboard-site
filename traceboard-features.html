@@ -195,10 +195,10 @@
   <div class="nav-inner">
     <div class="brand">TRACEBOARD<span> / suite</span></div>
     <div class="nav-links">
-      <a href="#" style="color:var(--navy); font-weight:600;">Features</a>
-      <a href="#">Compare</a>
-      <a href="#">AI approach</a>
-      <a href="#">Pricing</a>
+  <a href="traceboard-features.html" style="color:var(--navy); font-weight:600;">Features</a>
+  <a href="traceboard-comparison.html">Compare</a>
+  <a href="traceboard-ai-approach.html">AI approach</a>
+  <a href="index.html#pricing">Pricing</a>
     </div>
   </div>
 </nav>
@@ -207,11 +207,11 @@
 
   <section class="hero">
     <div class="eyebrow">Features &amp; differentiators</div>
-    <h1>Everything a compliance team needs. Nothing they have to configure for months.</h1>
+    <h1>Connected engineering structure without a months-long rollout.</h1>
     <p class="hero-sub">
-      TraceBoard Suite is three connected products — requirements, documents, and test execution —
-      built specifically for ISO 26262, IEC 62304, and DO-178C teams. Here's what sets it apart from
-      the enterprise tools most of those teams are stuck paying for today.
+      TraceBoard Suite is three connected products — engineering items, controlled documentation, and
+      verification — with standards-aware templates and assessments for teams working in regulated contexts.
+      Here's what sets it apart from a disconnected spreadsheet workflow or heavyweight ALM rollout.
     </p>
 
     <div class="quickfacts">
@@ -234,7 +234,19 @@
     </div>
   </section>
 
-  <section>
+    <section>
+      <div class="section-head">
+        <div class="section-eyebrow">Calculated project state</div>
+        <h2>See where the recorded engineering model needs attention.</h2>
+        <p class="section-body">Engineering State is a deterministic, on-demand aggregate across compliance assessment, traceability, verification, risk, consistency, change impact and baseline readiness. It is calculated from recorded engineering facts and defined thresholds—not an AI opinion, certification score or release approval.</p>
+      </div>
+      <div class="principles">
+        <div class="principle"><div class="principle-num">STATE</div><h3>Seven dimensions</h3><p>Review the dimensions behind the aggregate rather than relying on a generic project-health label.</p></div>
+        <div class="principle"><div class="principle-num">DATA</div><h3>Recorded facts</h3><p>Traceability, results, assessments, risks, consistency findings, change impact and baseline checks remain inspectable.</p></div>
+      </div>
+    </section>
+
+    <section>
     <div class="section-head">
       <div class="section-eyebrow">Why teams switch</div>
       <h2>Five things most requirements tools weren't built for</h2>
@@ -244,12 +256,12 @@
       <div class="principle">
         <div class="principle-num">01</div>
         <h3>Live in days, not quarters</h3>
-        <p>ISO 26262, IEC 62304, and DO-178C workflows come pre-built. Skip the months of configuration most enterprise ALM rollouts require before a team traces its first requirement.</p>
+        <p>Standards-aware templates and assessments help teams organize engineering evidence for ISO 26262, IEC 62304, and DO-178C work. They support engineering review; they do not certify a product or replace a qualified compliance process.</p>
       </div>
       <div class="principle">
         <div class="principle-num">02</div>
-        <h3>Air-gapped by design</h3>
-        <p>Self-hosted on your own infrastructure, with local model support for every AI feature. No project data leaves your network — a requirement, not an afterthought, for defense and medical work.</p>
+        <h3>Self-hosted control</h3>
+        <p>Run the core suite on your own infrastructure, with local model support when configured. OIDC, remote Git and cloud LLMs remain optional network-dependent integrations.</p>
       </div>
       <div class="principle">
         <div class="principle-num">03</div>
@@ -263,26 +275,38 @@
       </div>
       <div class="principle">
         <div class="principle-num">05</div>
-        <h3>Your data stays portable</h3>
-        <p>ReqIF import and export means you're never locked into a proprietary format to move between tools or hand off to a partner.</p>
+        <h3>Specific data operations</h3>
+        <p>Use supported JSON, CSV, XLSX, PDF, DOCX and Markdown operations for the workflows each endpoint implements. The site does not promise ReqIF or arbitrary full-fidelity interchange.</p>
       </div>
       <div class="principle">
         <div class="principle-num">06</div>
-        <h3>AI that can't lie to your audit trail</h3>
-        <p>Every AI-cited artifact ID is validated against real project data before it reaches you. Fabricated references get stripped, not shipped.</p>
+        <h3>AI that stays accountable to the record</h3>
+        <p>AI-cited artifact IDs and generated content are checked against available project data where supported, then remain subject to human review. The system does not guarantee semantic correctness.</p>
       </div>
     </div>
     <div class="ai-note">
       <span class="badge committed">GOVERNANCE</span>
-      <span>Principle 06 is the short version — see <a href="#">Our approach to AI</a> for the full propose → validate → approve → commit pipeline.</span>
+      <span>Principle 06 is the short version — see <a href="traceboard-ai-approach.html">Our approach to AI</a> for the full propose → validate → approve → commit pipeline.</span>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <div class="section-eyebrow">Standards-aware engineering</div>
+      <h2>Support the evidence work without claiming certification.</h2>
+      <p class="section-body">TraceBoard Suite provides standards-aware analysis, templates, assessments, evidence and provenance for engineering review and audit preparation. It does not certify a product or determine that a customer is compliant.</p>
+    </div>
+    <div class="compare-strip">
+      <div class="compare-col"><h3>Named standards</h3><ul><li>IEC 62304</li><li>ISO 14971 risk and hazard context</li><li>ISO 26262</li><li>DO-178C</li></ul></div>
+      <div class="compare-col"><h3>Implemented boundary</h3><ul><li>Standards-aware templates and assessments</li><li>Clause-oriented evidence and provenance where implemented</li><li>Controlled documentation and baseline comparison</li><li>Qualified human review remains part of the process</li></ul></div>
     </div>
   </section>
 
   <section>
     <div class="section-head">
       <div class="section-eyebrow">The suite</div>
-      <h2>Three products. One traceability matrix.</h2>
-      <p class="section-body">Use them together, or start with just one — every artifact connects natively. Badges show which features are deterministic and which are AI-assisted, using the same vocabulary as our AI governance model.</p>
+      <h2>Three products. One connected engineering model.</h2>
+      <p class="section-body">Use them together, or start with just one. Shared project and item references connect the suite while each product handles its own operational work. The implementation supports baselines, evidence, tests, documents and traceability across the suite.</p>
     </div>
 
     <div class="product-block">
@@ -293,14 +317,13 @@
         </div>
         <div class="product-feats">
           <div class="pfeat"><span class="badge committed">COMMITTED</span> Bidirectional linking, baselines & snapshot comparison</div>
-          <div class="pfeat"><span class="badge committed">COMMITTED</span> Readiness Score from a fixed, published weighting formula</div>
+          <div class="pfeat"><span class="badge committed">COMMITTED</span> Engineering State from defined engineering dimensions</div>
           <div class="pfeat"><span class="badge proposes">PROPOSES</span> AI import from messy PDF, Word & Excel sources</div>
           <div class="pfeat"><span class="badge proposes">PROPOSES</span> Suspect-link detection after upstream edits</div>
-          <div class="pfeat"><span class="badge committed">COMMITTED</span> ReqIF import / export</div>
           <div class="pfeat"><span class="badge committed">COMMITTED</span> Formal review & sign-off workflow</div>
-          <div class="pfeat"><span class="badge committed">COMMITTED</span> Advanced reporting — custom templates, traceability matrix, coverage, snapshot PDF</div>
+          <div class="pfeat"><span class="badge committed">COMMITTED</span> Reporting, traceability matrix, coverage and snapshot PDF operations</div>
           <div class="pfeat"><span class="badge committed">COMMITTED</span> Git integration — webhooks, manual sync, branch filtering, private repos</div>
-          <div class="pfeat"><span class="badge committed">COMMITTED</span> CI/CD API — test runs created automatically from commits</div>
+          <div class="pfeat"><span class="badge committed">COMMITTED</span> API-supported test-run and commit-association workflows</div>
         </div>
       </div>
     </div>
@@ -348,7 +371,7 @@
       </div>
       <div>
         <p>Enterprise requirements tools rarely lose on the license line. They lose on implementation consultants, ongoing admin overhead, and the months it takes before a team traces its first requirement.</p>
-        <p>TraceBoard ships with the compliance workflow already built — a speed-to-value trade-off you can measure in weeks saved, not just euros.</p>
+      <p>TraceBoard ships with standards-aware engineering structure and evidence workflows; the speed-to-value trade-off is measured in less configuration, not a promise of compliance.</p>
       </div>
     </div>
   </section>
@@ -372,9 +395,9 @@
         <h3>TraceBoard Suite</h3>
         <ul>
           <li>Flat annual pricing for 5 to 100 users</li>
-          <li>Pre-built ISO 26262 / IEC 62304 / DO-178C workflows from day one</li>
+          <li>Standards-aware templates, assessments and evidence support</li>
           <li>AI proposes only — every suggestion validated and human-approved before it commits</li>
-          <li>Self-hosted and air-gapped by design, not by exception</li>
+          <li>Self-hosted, with local operation where configured</li>
         </ul>
       </div>
     </div>
@@ -387,7 +410,7 @@
     </div>
     <div class="pricing-strip">
       <div class="pricing-copy">Flat annual pricing from <b>€999 to €11,990</b>, covering teams of <b>5 to 100 users</b>. No per-seat licensing, no usage-based AI billing.</div>
-      <a class="btn btn-primary" href="#">See plan details</a>
+      <a class="btn btn-primary" href="index.html#pricing">See plan details</a>
     </div>
   </section>
 
@@ -395,28 +418,28 @@
     <div class="section-head">
       <div class="section-eyebrow">Model compatibility &amp; data freedom</div>
       <h2>Your models. Your data.</h2>
-      <p class="section-body">TraceBoard Suite adapts to virtually any LLM and keeps your compliance data portable — no proprietary lock-in.</p>
+      <p class="section-body">Configure AI through a supported local or OpenAI-compatible endpoint, and use the data operations implemented for each workflow.</p>
     </div>
 
     <div class="trust-grid">
 
     <div class="trust-card">
-      <h3>Broad LLM Compatibility</h3>
-      <p>The TraceBoard Suite is engineered to work with virtually any Large Language Model. Whether you require a tiny 3B parameter model running locally on a low-power device, or a 1.6 trillion parameter model from a cloud provider, the architecture adapts seamlessly.</p>
+      <h3>Configured model endpoints</h3>
+      <p>AI can use a local Ollama or OpenAI-compatible HTTP endpoint. The behavior and quality of generated output depend on the selected model and its configuration.</p>
       <ul>
-        <li><strong>Local (air-gapped):</strong> supports Ollama, LM Studio, and any OpenAI-compatible local server.</li>
-        <li><strong>Cloud:</strong> natively supports Mistral AI, OpenAI, Anthropic, DeepSeek, and any provider with an OpenAI-compatible API endpoint.</li>
+        <li><strong>Local:</strong> use Ollama or another configured OpenAI-compatible local endpoint where the deployment supports it.</li>
+        <li><strong>Cloud:</strong> use a configured compatible endpoint when network access and provider configuration are available.</li>
       </ul>
       <p class="note">Smaller models (≤7B) may produce less detailed narratives, while larger models provide deeper insights — giving you full control over the trade-off between cost, latency, and quality.</p>
     </div>
 
     <div class="trust-card">
-      <h3>Commitment to Data Freedom</h3>
-      <p>At TraceBoard, we believe your compliance data is yours, not ours. We explicitly do not use proprietary binary formats or encrypted data stores.</p>
+      <h3>Specific data operations</h3>
+      <p>Your project remains on customer-controlled infrastructure, with supported endpoint-specific data operations rather than a promise of arbitrary interchange.</p>
       <ul>
-        <li><strong>Open Standards:</strong> all import/export relies on JSON, PDF, SQL, and DOCX.</li>
-        <li><strong>Full Database Access:</strong> you have full access to your PostgreSQL database.</li>
-        <li><strong>Zero Lock-In:</strong> you are free to export your entire project — requirements, tests, tasks, and traceability links — at any time, without requiring our assistance.</li>
+        <li><strong>Supported formats:</strong> JSON, CSV, XLSX, PDF, DOCX and Markdown appear in specific implemented operations.</li>
+        <li><strong>Defined scope:</strong> format direction and fidelity depend on the endpoint; ReqIF and arbitrary full-fidelity interchange are not supported.</li>
+        <li><strong>Customer control:</strong> self-host the product and use the supported exports and APIs for your operational needs.</li>
       </ul>
     </div>
 
@@ -427,11 +450,11 @@
     <h2>See it on your own requirements.</h2>
     <p class="section-body">
       The fastest way to evaluate TraceBoard is against a real project — a messy spreadsheet,
-      an existing DOORS export, or a document you're tired of formatting by hand.
+      a spreadsheet or document you're tired of formatting by hand. Exact import and export support depends on the implemented operation; ReqIF is not supported.
     </p>
     <div class="cta-row">
-      <a href="#" class="btn btn-primary">Book a walkthrough</a>
-      <a href="#" class="btn btn-secondary">Read our approach to AI</a>
+      <a href="mailto:sales@traceboardsuite.com?subject=TraceBoard%20Suite%20walkthrough" class="btn btn-primary">Book a walkthrough</a>
+      <a href="traceboard-ai-approach.html" class="btn btn-secondary">Read our approach to AI</a>
     </div>
   </section>
 

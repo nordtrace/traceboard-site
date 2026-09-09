@@ -583,8 +583,8 @@
     <span class="brand-name">TraceBoard</span>
   </a>
   <div class="nav-links">
-    <a href="index.html#how-it-works">How it works</a>
-    <a href="index.html#capabilities">Features</a>
+    <a href="index.html#chain">How it works</a>
+    <a href="traceboard-features.html">Features</a>
     <a href="traceboard-comparison.html" class="active">Compare</a>
     <a href="index.html#deployment">Deployment</a>
     <a href="index.html#pricing">Pricing</a>
@@ -657,8 +657,8 @@
             <td><span class="partial" title="Partial functionality — requires add-on or additional configuration">~</span></td>
           </tr>
           <tr>
-            <th scope="row">Compliance Document Export (PDF &amp; Word)</th>
-            <td class="tb"><span class="yes">✓</span> Native PDF &amp; Word (TraceDocs) + PDF test reports (TraceTest)</td>
+            <th scope="row">Engineering Document Export (PDF &amp; Word)</th>
+            <td class="tb"><span class="yes">✓</span> TraceDocs PDF &amp; Word outputs + TraceTest PDF reports</td>
             <td><span class="partial" title="Requires a separate publishing engine (RPE)">~</span></td>
             <td><span class="yes">✓</span></td>
             <td><span class="yes">✓</span></td>
@@ -666,8 +666,8 @@
             <td><span class="yes">✓</span></td>
           </tr>
           <tr>
-            <th scope="row">End-to-End Req → Test Traceability</th>
-            <td class="tb"><span class="yes">✓</span></td>
+            <th scope="row">Recorded Req → Test Traceability</th>
+            <td class="tb"><span class="yes">✓</span> Linked relationships and deterministic coverage calculations</td>
             <td><span class="partial" title="Partial functionality — requires add-on or additional configuration">~</span></td>
             <td><span class="yes">✓</span></td>
             <td><span class="yes">✓</span></td>
@@ -693,8 +693,8 @@
             <td><span class="yes">✓</span></td>
           </tr>
           <tr>
-            <th scope="row">Air-Gap / Offline Support</th>
-            <td class="tb"><span class="yes">✓</span></td>
+            <th scope="row">Self-Hosted Core / Local Operation</th>
+            <td class="tb"><span class="yes">✓</span> Core can run locally when configured; external integrations require connectivity</td>
             <td><span class="yes">✓</span></td>
             <td><span class="no">—</span></td>
             <td><span class="yes">✓</span></td>
@@ -702,8 +702,8 @@
             <td><span class="yes">✓</span></td>
           </tr>
           <tr>
-            <th scope="row">ISO 26262 / IEC 62304 / DO-178C</th>
-            <td class="tb"><span class="yes">✓</span></td>
+            <th scope="row">Standards-Aware Support</th>
+            <td class="tb"><span class="yes">✓</span> Templates, assessments and evidence support for named standards</td>
             <td><span class="partial" title="Achieved through configuration, not built-in profiles">~</span></td>
             <td><span class="yes">✓</span></td>
             <td><span class="yes">✓</span></td>
@@ -757,7 +757,7 @@
           </tr>
           <tr>
             <th scope="row">Advanced Reporting</th>
-            <td class="tb"><span class="yes">✓</span> Custom templates, traceability matrix, coverage, snapshot PDF</td>
+<td class="tb"><span class="yes">✓</span> Reporting, traceability matrix, coverage, snapshot PDF operations</td>
             <td><span class="yes">✓</span></td>
             <td><span class="yes">✓</span></td>
             <td><span class="yes">✓</span></td>
@@ -833,7 +833,7 @@
       <div class="price-item featured">
         <div class="p-label">TraceBoard Suite</div>
         <div class="p-amount">€999 – €2,490</div>
-        <div class="p-note">Full traceability. Self-hosted.</div>
+<div class="p-note">Recorded relationships and deterministic traceability calculations. Self-hosted.</div>
       </div>
     </div>
 
@@ -868,14 +868,14 @@
       <p>Siemens Polarion has moved primarily to SaaS delivery. Jama Software is cloud-first. For many engineering environments this is not an option:</p>
       <ul>
         <li><strong>Data residency requirements</strong> — regulated industries often mandate that project data remains within specific jurisdictions or infrastructure boundaries.</li>
-        <li><strong>Air-gapped environments</strong> — classified or security-sensitive programmes cannot connect to external cloud services at all.</li>
+        <li><strong>Disconnected environments</strong> — a self-contained configuration can avoid external cloud services; optional OIDC, remote Git and cloud AI integrations require connectivity.</li>
         <li><strong>Audit trail ownership</strong> — some customers require complete control over where compliance-relevant data is stored and who can access it.</li>
       </ul>
-      <p>TraceBoard Suite deploys via Docker into your own infrastructure in minutes to a couple of hours — including fully air-gapped environments. Your data stays where it belongs, under your control.</p>
+      <p>TraceBoard Suite deploys via Docker into your own infrastructure. The core can support local operation where configured; OIDC, remote Git and cloud LLM integrations require connectivity to their external services.</p>
 
       <h3>TraceBoard Suite: right-sized compliance ALM</h3>
       <p>TraceBoard Suite was built specifically for the gap between enterprise ALM and no ALM. It combines three modules — TraceBoard (requirements), TraceDocs (document control), and TraceTest (test management) — into a single integrated tool where traceability across all three layers is a first principle, not an afterthought.</p>
-      <p>Annual plans start at €999, including all three modules with no per-user fees. It is not a replacement for IBM DOORS if you are running a 500-person programme. It is the tool that gives a 10-person ISO 26262 team the compliance infrastructure they need to pass an audit, at a price their engineering lead can approve without escalating to procurement.</p>
+        <p>Published plans start at €999, subject to the current commercial terms. TraceBoard Suite is not a replacement for IBM DOORS in a 500-person programme. It is intended for teams that need a right-sized engineering traceability and evidence system without the deployment and configuration overhead of a heavyweight ALM rollout.</p>
 
     </article>
 
@@ -903,14 +903,14 @@
         <li>You are a <strong>5–100-person engineering team</strong> working under ISO 26262, IEC 62304, DO-178C, or a comparable safety standard.</li>
         <li>Your current compliance infrastructure relies on <strong>Excel, Word, or disconnected tools</strong> and an audit is on the horizon.</li>
         <li>You have evaluated enterprise ALM tools and found the <strong>licence cost or implementation overhead unacceptable</strong> for your team size.</li>
-        <li>You need compliance data to remain on <strong>your own infrastructure</strong> — on-premise, private cloud, or fully air-gapped.</li>
-        <li>You need a tool your team can be <strong>productive in within hours</strong>, not months — including in air-gapped environments.</li>
+        <li>You need compliance data to remain on <strong>your own infrastructure</strong> — on-premise, private cloud, or a locally configured environment.</li>
+        <li>You want a tool your team can adopt without a months-long enterprise rollout; actual setup depends on your environment and integrations.</li>
       </ul>
 
       <h3>TraceBoard Suite may not be the right fit if</h3>
       <ul>
         <li>You are managing a <strong>large programme</strong> — hundreds of engineers, thousands of requirements — where enterprise-scale capabilities and integrations are genuinely required.</li>
-        <li>You need <strong>deep legacy integrations</strong> with established enterprise toolchains such as DOORS-format exports, PLM systems, or custom OSLC connectors.</li>
+        <li>You need <strong>deep legacy integrations</strong> with established enterprise toolchains such as ReqIF/DOORS interchange, PLM systems, or custom OSLC connectors. Those are outside the current product scope.</li>
         <li>Your organisation has already standardised on <strong>Polarion or Codebeamer</strong> enterprise-wide and you need to operate within that existing ecosystem.</li>
       </ul>
 
@@ -922,27 +922,27 @@
   <div class="container">
     <div class="section-label">Model Compatibility &amp; Data Freedom</div>
     <h2 class="section-title">Your models. Your data.</h2>
-    <p class="section-sub">TraceBoard Suite adapts to virtually any LLM and keeps your compliance data portable — no proprietary lock-in.</p>
+    <p class="section-sub">TraceBoard Suite supports configured local or OpenAI-compatible AI endpoints and specific data operations on customer-controlled infrastructure.</p>
 
     <div class="trust-grid">
 
     <div class="trust-card">
-      <h3>Broad LLM Compatibility</h3>
-      <p>The TraceBoard Suite is engineered to work with virtually any Large Language Model. Whether you require a tiny 3B parameter model running locally on a low-power device, or a 1.6 trillion parameter model from a cloud provider, the architecture adapts seamlessly.</p>
+      <h3>Configured model endpoints</h3>
+      <p>Use a configured local Ollama or OpenAI-compatible HTTP endpoint. Output quality and behavior depend on the selected model, configuration and review.</p>
       <ul>
-        <li><strong>Local (air-gapped):</strong> supports Ollama, LM Studio, and any OpenAI-compatible local server.</li>
-        <li><strong>Cloud:</strong> natively supports Mistral AI, OpenAI, Anthropic, DeepSeek, and any provider with an OpenAI-compatible API endpoint.</li>
+        <li><strong>Local:</strong> use a configured local endpoint where the deployment supports it.</li>
+        <li><strong>Cloud:</strong> use a compatible endpoint when network access and provider configuration are available.</li>
       </ul>
       <p class="note">Smaller models (≤7B) may produce less detailed narratives, while larger models provide deeper insights — giving you full control over the trade-off between cost, latency, and quality.</p>
     </div>
 
     <div class="trust-card">
-      <h3>Commitment to Data Freedom</h3>
-      <p>At TraceBoard, we believe your compliance data is yours, not ours. We explicitly do not use proprietary binary formats or encrypted data stores.</p>
+      <h3>Specific data operations</h3>
+      <p>Use supported endpoint-specific JSON, CSV, XLSX, PDF, DOCX and Markdown operations rather than assuming arbitrary full-fidelity interchange.</p>
       <ul>
-        <li><strong>Open Standards:</strong> all import/export relies on JSON, PDF, SQL, and DOCX.</li>
-        <li><strong>Full Database Access:</strong> you have full access to your PostgreSQL database.</li>
-        <li><strong>Zero Lock-In:</strong> you are free to export your entire project — requirements, tests, tasks, and traceability links — at any time, without requiring our assistance.</li>
+        <li><strong>Defined scope:</strong> format direction and fidelity depend on the implemented operation.</li>
+        <li><strong>Customer control:</strong> self-host the product and use supported exports and APIs for operational needs.</li>
+        <li><strong>Boundary:</strong> ReqIF and arbitrary requirements-tool interchange are not supported.</li>
       </ul>
     </div>
 
@@ -966,9 +966,9 @@
 <footer>
   <div>TraceBoard Suite — Self‑hosted traceability for engineering teams. © 2026</div>
   <div class="footer-links">
-    <a href="index.html#privacy">Privacy</a>
-    <a href="index.html#terms">Terms</a>
-    <a href="index.html#contact">Contact</a>
+    <a href="mailto:privacy@traceboardsuite.com">Privacy</a>
+    <a href="mailto:legal@traceboardsuite.com">Terms</a>
+    <a href="mailto:contact@traceboardsuite.com">Contact</a>
   </div>
 </footer>
 

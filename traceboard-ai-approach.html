@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Our Approach to AI — TraceBoard Suite</title>
-<meta name="description" content="Discover TraceBoard's deterministic AI approach to ALM. Run local, private models for automated consistency checks and trace validation without data leaks.">
+<meta name="description" content="Discover TraceBoard's deterministic AI approach to engineering traceability. Run configured local models for consistency checks and trace analysis on customer-controlled infrastructure.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -359,8 +359,8 @@
     <span class="brand-name">TraceBoard</span>
   </a>
   <div class="nav-links">
-    <a href="index.html#how-it-works">How it works</a>
-    <a href="index.html#capabilities">Features</a>
+    <a href="index.html#chain">How it works</a>
+    <a href="traceboard-features.html">Features</a>
     <a href="traceboard-comparison.html">Compare</a>
     <a href="index.html#deployment">Deployment</a>
     <a href="index.html#pricing">Pricing</a>
@@ -375,10 +375,11 @@
     <div class="eyebrow">Our approach to AI</div>
     <h1>AI that helps.<br>Never AI that decides.</h1>
     <p class="hero-sub">
-      TraceBoard's engineering data — requirements, links, test results, baselines — is always
-      deterministic and always yours. AI is an optional layer on top of that core: it can propose,
-      draft, and flag, but nothing enters your system of record without your explicit approval.
-      The product works fully offline with zero AI configured, and it always will.
+      TraceBoard's engineering data — requirements, links, test results, baselines — is deterministic
+      and customer-controlled. AI is an optional layer on top of that core: it can propose, draft,
+      and flag, but nothing enters your system of record without your explicit approval.
+      The deterministic core can operate without a configured AI model; fully local operation depends
+      on the deployment configuration and any external integrations selected.
     </p>
 
     <div class="pipeline">
@@ -470,8 +471,8 @@
       </div>
       <div class="principle">
         <div class="principle-num">04</div>
-        <h3>Works fully offline</h3>
-        <p>Self-hosted and air-gapped deployments run with zero AI, zero cloud calls, and zero telemetry. This isn't a fallback — it's the baseline.</p>
+        <h3>Control the deployment path</h3>
+        <p>The core suite can be self-hosted, and a local model can keep AI requests inside your network when configured that way. OIDC, remote Git and cloud LLMs require their external services.</p>
       </div>
     </div>
   </section>
@@ -481,8 +482,8 @@
       <div class="section-eyebrow">How it works</div>
       <h2>Propose → Validate → Approve → Commit</h2>
       <p class="section-body">
-        The same four-stage pipeline governs every AI feature in TraceBoard, regardless of
-        which module it touches. Take test case generation as an example.
+        This four-stage pipeline illustrates how TraceBoard handles AI-assisted workflows,
+        including test case generation. The exact interaction depends on the feature.
       </p>
     </div>
     <div class="stage-list">
@@ -511,7 +512,7 @@
         <div class="stage-tag commit">04 · COMMIT</div>
         <div class="stage-content">
           <h4>Only approved items enter the record</h4>
-          <p>Once approved, the test case becomes a normal, deterministic TraceBoard object — indistinguishable in the system from one written by hand, with a full audit trail of who approved it and when.</p>
+          <p>Once approved, the test case becomes a normal TraceBoard object with the review decision recorded. The committed record is deterministic; approval does not guarantee that the underlying engineering judgment is correct.</p>
         </div>
       </div>
     </div>
@@ -545,10 +546,6 @@
         <p>Drafts report sections from your project data and flags inconsistencies across your document set.</p>
       </div>
     </div>
-    <div class="roadmap-row">
-      <span class="badge roadmap">ON THE ROADMAP</span>
-      <span>ReqIF schema mapping on import, and project-grounded natural language search — same pipeline, same approval gate.</span>
-    </div>
   </section>
 
   <section>
@@ -574,8 +571,8 @@
       </div>
       <div class="committed-card">
         <span class="badge committed">COMMITTED</span>
-        <h4>Full offline operation</h4>
-        <p>The entire product, including this list, works with zero AI configured.</p>
+        <h4>Deterministic core capabilities</h4>
+        <p>Stored items, relationships, calculations, baselines and recorded evidence do not require an AI model to remain inspectable.</p>
       </div>
     </div>
   </section>
@@ -585,22 +582,22 @@
       <div>
         <h3>Built for the environments that can't take chances.</h3>
         <p>
-          TraceBoard deploys self-hosted, including fully air-gapped. AI is one optional Docker
-          service among several — remove it, and every other module runs exactly the same.
+          TraceBoard deploys self-hosted. A local AI endpoint can support local operation, while
+          external identity, remote Git and cloud LLM integrations require network access.
         </p>
       </div>
       <div class="offline-stats">
         <div class="offline-stat">
-          <div class="n">NO CLOUD DEPENDENCY</div>
-          <div class="d">Core product has no external service calls</div>
+          <div class="n">SELF-HOSTED CORE</div>
+          <div class="d">Run the suite on customer infrastructure</div>
         </div>
         <div class="offline-stat">
-          <div class="n">NO DATA LEAVES YOUR INFRASTRUCTURE</div>
-          <div class="d">Local model support for fully offline AI</div>
+          <div class="n">LOCAL AI OPTION</div>
+          <div class="d">Use a configured local endpoint for local model requests</div>
         </div>
         <div class="offline-stat">
-          <div class="n">NO AI REQUIREMENT, ANYWHERE</div>
-          <div class="d">Every module works with AI fully disabled</div>
+          <div class="n">EXTERNAL SERVICES ARE EXPLICIT</div>
+          <div class="d">OIDC, remote Git and cloud LLMs require connectivity</div>
         </div>
       </div>
     </div>
@@ -610,28 +607,28 @@
     <div class="section-head">
       <div class="section-eyebrow">Model compatibility &amp; data freedom</div>
       <h2>Your models. Your data.</h2>
-      <p class="section-body">TraceBoard Suite adapts to virtually any LLM and keeps your compliance data portable — no proprietary lock-in.</p>
+      <p class="section-body">Configure AI through a supported local or OpenAI-compatible endpoint. Keep engineering data on customer-controlled infrastructure and use the data operations implemented for each workflow.</p>
     </div>
 
     <div class="trust-grid">
 
     <div class="trust-card">
-      <h3>Broad LLM Compatibility</h3>
-      <p>The TraceBoard Suite is engineered to work with virtually any Large Language Model. Whether you require a tiny 3B parameter model running locally on a low-power device, or a 1.6 trillion parameter model from a cloud provider, the architecture adapts seamlessly.</p>
+      <h3>Configured model endpoints</h3>
+      <p>The product supports local Ollama or OpenAI-compatible HTTP configuration. Generated output depends on the selected model, configuration, context and review.</p>
       <ul>
-        <li><strong>Local (air-gapped):</strong> supports Ollama, LM Studio, and any OpenAI-compatible local server.</li>
-        <li><strong>Cloud:</strong> natively supports Mistral AI, OpenAI, Anthropic, DeepSeek, and any provider with an OpenAI-compatible API endpoint.</li>
+        <li><strong>Local:</strong> use a configured local endpoint where the deployment supports it.</li>
+        <li><strong>Cloud:</strong> use a configured compatible endpoint when network access is available.</li>
       </ul>
       <p class="note">Smaller models (≤7B) may produce less detailed narratives, while larger models provide deeper insights — giving you full control over the trade-off between cost, latency, and quality.</p>
     </div>
 
     <div class="trust-card">
-      <h3>Commitment to Data Freedom</h3>
-      <p>At TraceBoard, we believe your compliance data is yours, not ours. We explicitly do not use proprietary binary formats or encrypted data stores.</p>
+      <h3>Specific data operations</h3>
+      <p>Use supported endpoint-specific JSON, CSV, XLSX, PDF, DOCX and Markdown operations. ReqIF and arbitrary full-fidelity interchange are not supported.</p>
       <ul>
-        <li><strong>Open Standards:</strong> all import/export relies on JSON, PDF, SQL, and DOCX.</li>
-        <li><strong>Full Database Access:</strong> you have full access to your PostgreSQL database.</li>
-        <li><strong>Zero Lock-In:</strong> you are free to export your entire project — requirements, tests, tasks, and traceability links — at any time, without requiring our assistance.</li>
+        <li><strong>Defined scope:</strong> format direction and fidelity depend on the operation.</li>
+        <li><strong>Customer control:</strong> self-host the product and use supported exports and APIs for operational needs.</li>
+        <li><strong>Reviewable output:</strong> AI-generated content remains proposed until a human accepts it.</li>
       </ul>
     </div>
 
@@ -654,9 +651,9 @@
 <footer>
   <div>TraceBoard Suite — Self‑hosted traceability for engineering teams. © 2026</div>
   <div class="footer-links">
-    <a href="index.html#privacy">Privacy</a>
-    <a href="index.html#terms">Terms</a>
-    <a href="index.html#contact">Contact</a>
+    <a href="mailto:privacy@traceboardsuite.com">Privacy</a>
+    <a href="mailto:legal@traceboardsuite.com">Terms</a>
+    <a href="mailto:contact@traceboardsuite.com">Contact</a>
   </div>
 </footer>
 

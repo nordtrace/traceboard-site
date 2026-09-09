@@ -228,8 +228,8 @@
     <span class="brand-name">TraceBoard</span>
   </a>
   <div class="nav-links">
-    <a href="index.html#how-it-works">How it works</a>
-    <a href="index.html#capabilities">Features</a>
+  <a href="index.html#chain">How it works</a>
+  <a href="traceboard-features.html">Features</a>
     <a href="traceboard-comparison.html">Compare</a>
     <a href="index.html#deployment">Deployment</a>
     <a href="index.html#pricing">Pricing</a>
@@ -270,7 +270,7 @@
   </ul>
 
   <h2>Why the architecture caught it anyway</h2>
-  <p>This is the scenario our AI architecture is built for. TraceBoard's core principle is that the deterministic engine is fully functional without AI, and the LLM layer only ever proposes — it never commits without explicit human review. Because of that:</p>
+  <p>This is one scenario our AI architecture is designed to support. TraceBoard's deterministic core remains usable without a configured AI model, and the LLM layer proposes rather than silently committing content. Because of that:</p>
   <ol>
     <li>The bug lived in the deterministic import stage, not the AI reasoning stage — exactly where it needed to be caught, since that's the layer meant to be reliable and inspectable.</li>
     <li>Cross-checking two independent models against the same source data surfaced an inconsistency that neither model alone would have revealed.</li>
@@ -282,11 +282,11 @@
   <p>We extended the same transparency principle to the Audit Narrative itself: every section now clearly marks which parts come from the deterministic engine (counts, statuses, links — verifiable, reproducible) and which are LLM-reasoned interpretation (risk narratives, recommendations). And AI-generated Tasks and Tests are now opt-in and clearly labeled as AI-generated, never silently created alongside real project data.</p>
 
   <h2>The takeaway</h2>
-  <p>We don't present this as a story about an AI model failing. It's the opposite — the audit models did their job correctly, faithfully reporting on the data they were given. The actual defect was upstream, in a deterministic transformation step, and it was invisible until we deliberately tested with independent models and treated their agreement as a signal worth investigating rather than dismissing as coincidence.</p>
+  <p>We present this as a bounded internal test scenario, not a guarantee that every defect will be found. The audit models reported on the data they were given; the actual defect was upstream, in a deterministic transformation step, and it became visible when we tested with independent models and treated their agreement as a signal worth investigating.</p>
 
   <div class="highlight-box">
-    <h3>That's the case for propose-only AI in regulated engineering workflows</h3>
-    <p>Not that AI won't make mistakes, but that a system designed so nothing commits without a traceable path back to source — and a human checkpoint before it does — turns a silent data-integrity bug into a caught one.</p>
+    <h3>That's the case for reviewable AI in regulated engineering workflows</h3>
+    <p>AI can make mistakes. A system designed so proposed content has a traceable path back to source—and a human checkpoint before commitment—can make data-integrity issues visible in scenarios like this one.</p>
   </div>
 
 </article>
@@ -294,9 +294,9 @@
 <footer>
   <div>TraceBoard Suite — Self‑hosted traceability for engineering teams. © 2026</div>
   <div class="footer-links">
-    <a href="index.html#privacy">Privacy</a>
-    <a href="index.html#terms">Terms</a>
-    <a href="index.html#contact">Contact</a>
+    <a href="mailto:privacy@traceboardsuite.com">Privacy</a>
+    <a href="mailto:legal@traceboardsuite.com">Terms</a>
+    <a href="mailto:contact@traceboardsuite.com">Contact</a>
   </div>
 </footer>
 

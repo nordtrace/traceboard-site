@@ -223,7 +223,19 @@
   .footer-links a:not(:last-child)::after{ content:'·'; margin:0 10px; color:var(--hairline-strong); }
 
   @media (max-width:640px){
-    .nav-links{ display:none; }
+    .nav{
+      height:auto;
+      flex-wrap:wrap;
+      padding-top:12px;
+      padding-bottom:10px;
+    }
+    .nav-links{
+      width:100%;
+      justify-content:center;
+      flex-wrap:wrap;
+      gap:8px 16px;
+      padding-top:10px;
+    }
     .page-header{ padding:48px 24px 24px; }
     .diagram-flow{ grid-template-columns:1fr; }
     .diagram-arrow{ transform:rotate(90deg); }
@@ -302,7 +314,7 @@
 
   <div class="highlight-box">
     <h3>Next step</h3>
-    <p>Read <a href="traceboard-ai-approach.html">TraceBoard's approach to AI</a> for the feature-dependent workflow and its boundaries, or <a href="mailto:risto.jarnstrom@traceboardsuite.com">request a walkthrough</a> focused on your requirements-review process.</p>
+    <p>Read <a href="traceboard-ai-approach.html">TraceBoard's approach to AI</a> for the feature-dependent workflow and its boundaries, or <a href="mailto:sales@traceboardsuite.com?subject=TraceBoard%20Suite%20walkthrough">request a walkthrough</a> focused on your requirements-review process.</p>
   </div>
 
 </article>
@@ -310,9 +322,7 @@
 <footer>
   <div>TraceBoard Suite — Self‑hosted traceability for engineering teams. © 2026</div>
   <div class="footer-links">
-    <a href="mailto:privacy@traceboardsuite.com">Privacy</a>
-    <a href="mailto:legal@traceboardsuite.com">Terms</a>
-    <a href="mailto:contact@traceboardsuite.com">Contact</a>
+    <a href="mailto:support@traceboardsuite.com">Contact</a>
   </div>
 </footer>
 

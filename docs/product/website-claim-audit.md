@@ -44,7 +44,7 @@ Confidence is high for the capability and limitation findings covered by the inv
 
 ### Pages and content areas audited
 
-1. `index.html` — homepage: navigation, hero, engineering model, products, evidence, deployment, FAQ, pricing, metadata, CTAs, privacy/terms/contact sections.
+1. `index.html` — homepage: navigation, hero, engineering model, products, evidence, deployment, FAQ, pricing, metadata, CTAs, evaluation notice, and support contact.
 2. `traceboard-features.html` — feature/differentiator page: engineering model, workflows, AI, standards, deployment, pricing, LLM compatibility, data export, CTAs.
 3. `traceboard-comparison.html` — comparison page: ALM comparison, pricing, deployment, AI approval, standards, integrations/fit, LLM compatibility, portability.
 4. `traceboard-ai-approach.html` — AI approach page: propose/validate/approve/commit, deterministic core, local/cloud models, offline statements, data freedom.

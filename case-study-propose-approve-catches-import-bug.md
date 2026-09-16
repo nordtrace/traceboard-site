@@ -52,4 +52,4 @@ The practical case for reviewable AI in regulated engineering workflows is narro
 
 ## Next step
 
-Read [TraceBoard's approach to AI](traceboard-ai-approach.html) for the feature-dependent workflow and its boundaries, or [request a walkthrough](mailto:contact@traceboardsuite.com) focused on your requirements-review process.
+Read [TraceBoard's approach to AI](traceboard-ai-approach.html) for the feature-dependent workflow and its boundaries, or [request a walkthrough](mailto:sales@traceboardsuite.com?subject=TraceBoard%20Suite%20walkthrough) focused on your requirements-review process.

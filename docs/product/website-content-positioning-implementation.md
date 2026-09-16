@@ -15,9 +15,12 @@ Implemented the approved content and positioning plan as a targeted refinement o
 - strengthening TraceDocs, TraceTest, evidence, provenance, and self-hosted/local-AI explanations;
 - replacing universal interoperability and LLM language with bounded operations;
 - correcting stale internal links and expanding the sitemap to include the existing Features and TCO pages; and
+- removing unpublished Privacy and Terms footer links, standardizing confirmed support/sales contact routes, and adding a factual evaluation-build notice; and
 - documenting remaining commercial and publishing risks without inventing new commercial facts.
 
 No product repository files, capability inventory, audit, or positioning plan were modified.
+
+The site currently does not publish formal privacy information or terms of service. Until those documents receive appropriate review, public pages use a support contact rather than presenting placeholder legal links.
 
 ## 2. Pages modified
 

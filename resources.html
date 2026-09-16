@@ -194,7 +194,19 @@
     .resources-grid{ grid-template-columns:repeat(2, 1fr); }
   }
   @media (max-width:640px){
-    .nav-links{ display:none; }
+    .nav{
+      height:auto;
+      flex-wrap:wrap;
+      padding-top:12px;
+      padding-bottom:10px;
+    }
+    .nav-links{
+      width:100%;
+      justify-content:center;
+      flex-wrap:wrap;
+      gap:8px 16px;
+      padding-top:10px;
+    }
     .resources-grid{ grid-template-columns:1fr; }
     .page-header{ padding:48px 24px 32px; }
   }
@@ -273,9 +285,7 @@
 <footer>
   <div>TraceBoard Suite — Self‑hosted traceability for engineering teams. © 2026</div>
   <div class="footer-links">
-    <a href="mailto:privacy@traceboardsuite.com">Privacy</a>
-    <a href="mailto:legal@traceboardsuite.com">Terms</a>
-    <a href="mailto:contact@traceboardsuite.com">Contact</a>
+    <a href="mailto:support@traceboardsuite.com">Contact</a>
   </div>
 </footer>
 

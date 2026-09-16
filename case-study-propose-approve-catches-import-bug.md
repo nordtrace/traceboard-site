@@ -1,12 +1,16 @@
-# Case Study: How Propose → Validate → Approve → Commit Caught a Silent Traceability Bug
+# Engineering Note: How Reviewable AI Made a Traceability Import Bug Visible
 
-**A real example from our own testing, not a hypothetical.**
+**An internal engineering test from TraceBoard.**
+
+**Audience:** Automotive software and systems teams working with safety-related requirements, including ISO 26262 contexts. This note describes one bounded test scenario; it is not a claim that TraceBoard automatically detects every traceability defect.
+
+**By:** TraceBoard Engineering · **Published:** 16 September 2026 · **Fix status:** Implemented in the current development build; release version pending publication.
 
 ## The setup
 
 We stress-test TraceBoard's AI features against intentionally messy source documents — the kind of inconsistent, half-finished SRS drafts that show up constantly in real engineering teams. One test case was a Software Requirements Specification with a mix of primary requirements, conditional "SHOULD" variants, and response-time constraints, all using a hierarchical ID scheme (e.g., `REQ-002`, `REQ-002a`, `REQ-002c`).
 
-We ran the same document through TraceBoard's AI Import and AI Audit Narrative features using two independent LLMs — Mistral Small and DeepSeek — expecting to compare output quality between a smaller and larger model.
+We ran the same document through TraceBoard's AI Import and AI Audit Narrative features using two independent LLMs — Mistral Small and DeepSeek — expecting to compare output quality between a smaller and larger model. In TraceBoard's AI-assisted workflow, **Propose → Validate → Approve → Commit** means the model drafts content, deterministic checks inspect its structure, a person reviews the visible proposal, and only an accepted result is committed. The exact interaction depends on the feature.
 
 ## What we found
 
@@ -14,7 +18,7 @@ The Audit Narrative from both models cited a specific "high severity" finding: a
 
 At first glance, this looked like a model hallucination — a plausible-sounding but fabricated citation, a known failure mode for LLMs asked to reference specific data points. That's a serious concern for a compliance tool: an audit finding that cites an artifact ID with no real referent is worse than an obviously wrong one, because it looks trustworthy on the surface.
 
-But the same three IDs showed up identically across independent runs, on two different models. That consistency was the actual signal. Independent models don't hallucinate identical fabricated IDs by chance — they were both faithfully reporting on something that was really in the database. The bug wasn't in the audit layer at all. It was one step upstream, in the AI Import pipeline.
+But the same three IDs showed up identically across independent runs, on two different models. That consistency was the actual signal. The models were faithfully reporting on the imported data. The defect was not in the audit layer; it was one step upstream, in the AI Import pipeline. Agreement between the runs became a reason to inspect the stored records rather than dismiss the finding as a hallucination.
 
 ## The real bug
 
@@ -26,9 +30,9 @@ The consequences of this were quiet but serious:
 - **Semantic meaning was lost.** A SHALL requirement, a SHOULD requirement, and a performance constraint — three different requirement types with different compliance weight under ISO 26262 — were collapsed into indistinguishable siblings.
 - **The AI Audit layer inherited the error downstream**, faithfully and confidently reporting on data that no longer meant what it appeared to mean.
 
-## Why the architecture caught it anyway
+## Why the architecture made the defect visible
 
-This is the scenario our AI architecture is built for. TraceBoard's core principle is that the deterministic engine is fully functional without AI, and the LLM layer only ever proposes — it never commits without explicit human review. Because of that:
+The architecture did not independently diagnose the import defect. It kept the transformed data and AI output visible enough for cross-checking and human review. TraceBoard's deterministic core remains usable without a configured AI model, and the LLM layer proposes rather than silently committing content. Because of that:
 
 1. The bug lived in the deterministic import stage, not the AI reasoning stage — exactly where it needed to be caught, since that's the layer meant to be reliable and inspectable.
 2. Cross-checking two independent models against the same source data surfaced an inconsistency that neither model alone would have revealed.
@@ -44,4 +48,8 @@ We extended the same transparency principle to the Audit Narrative itself: every
 
 We don't present this as a story about an AI model failing. It's the opposite — the audit models did their job correctly, faithfully reporting on the data they were given. The actual defect was upstream, in a deterministic transformation step, and it was invisible until we deliberately tested with independent models and treated their agreement as a signal worth investigating rather than dismissing as coincidence.
 
-That's the case for propose-only AI in regulated engineering workflows: not that AI won't make mistakes, but that a system designed so nothing commits without a traceable path back to source — and a human checkpoint before it does — turns a silent data-integrity bug into a caught one.
+The practical case for reviewable AI in regulated engineering workflows is narrower and more useful: AI can be wrong, but visible proposals, deterministic checks, source references, and a human checkpoint can make a data-integrity defect inspectable before it becomes accepted project data.
+
+## Next step
+
+Read [TraceBoard's approach to AI](traceboard-ai-approach.html) for the feature-dependent workflow and its boundaries, or [request a walkthrough](mailto:contact@traceboardsuite.com) focused on your requirements-review process.

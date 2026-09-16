@@ -86,6 +86,9 @@ No product repository files, capability inventory, audit, or positioning plan we
 - Reframed the result as a bounded internal test scenario rather than a universal defect-detection guarantee.
 - Replaced “propose-only AI” with reviewable-AI wording and clarified the limited conclusion.
 - Repaired the Features and legal/contact links.
+- Repositioned the page as an Engineering Note while preserving its stable URL.
+- Removed the duplicate sentence, explained the review workflow, corrected the architecture claim, and removed the redundant closing argument.
+- Added target-audience, author/date, fix-status metadata, an inline source-ID diagram, and AI-approach/walkthrough CTAs.
 
 ### `sitemap.xml`
 

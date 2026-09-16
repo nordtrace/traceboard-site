@@ -49,8 +49,8 @@ Confidence is high for the capability and limitation findings covered by the inv
 3. `traceboard-comparison.html` — comparison page: ALM comparison, pricing, deployment, AI approval, standards, integrations/fit, LLM compatibility, portability.
 4. `traceboard-ai-approach.html` — AI approach page: propose/validate/approve/commit, deterministic core, local/cloud models, offline statements, data freedom.
 5. `traceboard-tco.html` — pricing/TCO page: license and setup estimates, competitor comparisons, Excel/Word/Jira context, deployment CTAs.
-6. `resources.html` — public resources index: comparison, AI approach, and case-study product claims.
-7. `case-study.html` — public case study: AI import, audit narrative, deterministic engine, source-ID preservation, human review, ISO 26262 reference.
+6. `resources.html` — public resources index: comparison, AI approach, and engineering-note product claims.
+7. `case-study.html` — public engineering note: AI import, audit narrative, deterministic engine, source-ID preservation, human review, and ISO 26262 context.
 8. `index-legacy.html` — inspected but excluded from “current homepage” counts; contains older claims including managed cloud planned, extensive compliance/product claims, and older pricing/trial language.
 
 ### Navigation and page relationships

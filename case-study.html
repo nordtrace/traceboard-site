@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Case Study: Propose → Validate → Approve → Commit catches a silent traceability bug — TraceBoard Suite</title>
-<meta name="description" content="How TraceBoard's propose-validate-approve-commit architecture caught a real traceability bug that would have been invisible in a system that auto-commits AI suggestions.">
+<title>Engineering Note: Reviewable AI Made a Traceability Import Bug Visible — TraceBoard Suite</title>
+<meta name="description" content="An internal TraceBoard engineering test showing how source-ID flattening became visible through cross-model comparison, deterministic checks, and human review.">
 <link rel="icon" type="image/png" href="traceboard.png">
 <style>
   :root{
@@ -199,6 +199,14 @@
   }
   .article .highlight-box h3{ margin-top:0; }
   .article .highlight-box p:last-child{ margin-bottom:0; }
+  .article .diagram{ margin:32px 0; padding:20px; background:var(--paper-raised); border:1px solid var(--hairline); border-radius:4px; }
+  .diagram figcaption{ color:var(--slate); font-size:14px; margin-top:14px; }
+  .diagram-flow{ display:grid; grid-template-columns:1fr auto 1fr auto 1fr; gap:10px; align-items:center; }
+  .diagram-step{ padding:14px; border:1px solid var(--hairline-strong); border-radius:3px; color:var(--ink); font-size:14px; }
+  .diagram-step strong{ display:block; margin-bottom:6px; }
+  .diagram-step span{ color:var(--slate); font-family:monospace; font-size:13px; }
+  .diagram-step.alert{ border-color:var(--amber); }
+  .diagram-arrow{ color:var(--blue); font-size:20px; text-align:center; }
 
   /* ---------- Footer ---------- */
   footer{
@@ -217,6 +225,8 @@
   @media (max-width:640px){
     .nav-links{ display:none; }
     .page-header{ padding:48px 24px 24px; }
+    .diagram-flow{ grid-template-columns:1fr; }
+    .diagram-arrow{ transform:rotate(90deg); }
   }
 </style>
 </head>
@@ -239,9 +249,9 @@
 </nav>
 
 <header class="page-header">
-  <p class="section-eyebrow">Case Study</p>
-  <h1>How Propose → Validate → Approve → Commit Caught a Silent Traceability Bug</h1>
-  <p class="meta">A real example from our own testing, not a hypothetical.</p>
+  <p class="section-eyebrow">Engineering Note</p>
+  <h1>How Reviewable AI Made a Traceability Import Bug Visible</h1>
+  <p class="meta">TraceBoard Engineering · 16 September 2026 · Internal test scenario · Fix implemented in current development build; release version pending</p>
 </header>
 
 <article class="article">
@@ -249,19 +259,25 @@
 
   <h2>The setup</h2>
   <p>We stress-test TraceBoard's AI features against intentionally messy source documents — the kind of inconsistent, half-finished SRS drafts that show up constantly in real engineering teams. One test case was a Software Requirements Specification with a mix of primary requirements, conditional "SHOULD" variants, and response-time constraints, all using a hierarchical ID scheme (e.g., <code>REQ-002</code>, <code>REQ-002a</code>, <code>REQ-002c</code>).</p>
-  <p>We ran the same document through TraceBoard's AI Import and AI Audit Narrative features using two independent LLMs — Mistral Small and DeepSeek — expecting to compare output quality between a smaller and larger model.</p>
+  <p>We ran the same document through TraceBoard's AI Import and AI Audit Narrative features using two independent LLMs — Mistral Small and DeepSeek — expecting to compare output quality between a smaller and larger model. In TraceBoard's AI-assisted workflow, <strong>Propose → Validate → Approve → Commit</strong> means the model drafts content, deterministic checks inspect its structure, a person reviews the visible proposal, and only an accepted result is committed. The exact interaction depends on the feature.</p>
 
   <h2>What we found</h2>
   <p>The Audit Narrative from both models cited a specific "high severity" finding: a logical contradiction between three requirements, <code>REQ-043</code>, <code>REQ-044</code>, and <code>REQ-045</code>, over database vendor strategy (one requirement mandated vendor independence, another hard-coded PostgreSQL, a third carved out an SQLite exception).</p>
   <p>At first glance, this looked like a model hallucination — a plausible-sounding but fabricated citation, a known failure mode for LLMs asked to reference specific data points. That's a serious concern for a compliance tool: an audit finding that cites an artifact ID with no real referent is worse than an obviously wrong one, because it looks trustworthy on the surface.</p>
-  <p>But the same three IDs showed up identically across independent runs, on two different models. That consistency was the actual signal. Independent models don't hallucinate identical fabricated IDs by chance — they were both faithfully reporting on something that was really in the database. The bug wasn't in the audit layer at all. It was one step upstream, in the AI Import pipeline.</p>
-
-  <div class="pull-quote">
-    <p>Independent models don't hallucinate identical fabricated IDs by chance — they were both faithfully reporting on something that was really in the database.</p>
-  </div>
+  <p>But the same three IDs showed up identically across independent runs, on two different models. That consistency was the actual signal. The models were faithfully reporting on the imported data. The defect was not in the audit layer; it was one step upstream, in the AI Import pipeline. Agreement between the runs became a reason to inspect the stored records rather than dismiss the finding as a hallucination.</p>
 
   <h2>The real bug</h2>
   <p>The import tool was flattening hierarchical requirement IDs into a sequential flat list. <code>REQ-002</code>, <code>REQ-002a</code>, and <code>REQ-002c</code> — a primary SHALL requirement, a conditional SHOULD variant, and an unrelated response-time constraint — were being silently renumbered into three new sequential IDs with no relationship to the source document. Repeated across ~30 sections, this produced exactly the kind of clean-looking, higher-numbered IDs (<code>REQ-043</code>, <code>REQ-044</code>, <code>REQ-045</code>) that the Audit Narrative later cited.</p>
+  <figure class="diagram" aria-labelledby="diagram-caption">
+    <div class="diagram-flow">
+      <div class="diagram-step"><strong>Source hierarchy</strong><span>REQ-002<br>REQ-002a<br>REQ-002c</span></div>
+      <div class="diagram-arrow" aria-hidden="true">→</div>
+      <div class="diagram-step alert"><strong>Incorrect import</strong><span>REQ-043<br>REQ-044<br>REQ-045</span></div>
+      <div class="diagram-arrow" aria-hidden="true">→</div>
+      <div class="diagram-step"><strong>Audit narrative</strong><span>Finding cites flattened IDs; reviewer checks source</span></div>
+    </div>
+    <figcaption id="diagram-caption">The import transformation broke the source reference. Cross-model agreement made the mismatch visible for human review.</figcaption>
+  </figure>
   <p>The consequences of this were quiet but serious:</p>
   <ul>
     <li><strong>Traceability was silently broken.</strong> Anyone trying to verify an audit finding against the original SRS would find that <code>REQ-043</code> simply doesn't exist in the source document — a dead end, with no indication that anything had gone wrong.</li>
@@ -269,8 +285,8 @@
     <li><strong>The AI Audit layer inherited the error downstream</strong>, faithfully and confidently reporting on data that no longer meant what it appeared to mean.</li>
   </ul>
 
-  <h2>Why the architecture caught it anyway</h2>
-  <p>This is one scenario our AI architecture is designed to support. TraceBoard's deterministic core remains usable without a configured AI model, and the LLM layer proposes rather than silently committing content. Because of that:</p>
+  <h2>Why the architecture made the defect visible</h2>
+  <p>The architecture did not independently diagnose the import defect. It kept the transformed data and AI output visible enough for cross-checking and human review. TraceBoard's deterministic core remains usable without a configured AI model, and the LLM layer proposes rather than silently committing content. Because of that:</p>
   <ol>
     <li>The bug lived in the deterministic import stage, not the AI reasoning stage — exactly where it needed to be caught, since that's the layer meant to be reliable and inspectable.</li>
     <li>Cross-checking two independent models against the same source data surfaced an inconsistency that neither model alone would have revealed.</li>
@@ -285,8 +301,8 @@
   <p>We present this as a bounded internal test scenario, not a guarantee that every defect will be found. The audit models reported on the data they were given; the actual defect was upstream, in a deterministic transformation step, and it became visible when we tested with independent models and treated their agreement as a signal worth investigating.</p>
 
   <div class="highlight-box">
-    <h3>That's the case for reviewable AI in regulated engineering workflows</h3>
-    <p>AI can make mistakes. A system designed so proposed content has a traceable path back to source—and a human checkpoint before commitment—can make data-integrity issues visible in scenarios like this one.</p>
+    <h3>Next step</h3>
+    <p>Read <a href="traceboard-ai-approach.html">TraceBoard's approach to AI</a> for the feature-dependent workflow and its boundaries, or <a href="mailto:risto.jarnstrom@traceboardsuite.com">request a walkthrough</a> focused on your requirements-review process.</p>
   </div>
 
 </article>

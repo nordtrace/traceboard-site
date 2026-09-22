@@ -1,0 +1,3719 @@
+commit 7e2428e838b38223baa70f789e64e397c69960a9
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 21 23:02:22 2026 +0300
+
+    chore: update prompt log
+
+commit 7ecdbb61daf240fc80fd79d7e4f64fbd5a275e0d
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 21 23:02:16 2026 +0300
+
+    docs: correct deployment guide, add installation runbook
+    
+    - deployment.md: license and OIDC env vars corrected to match code,
+      license tiers aligned with implementation, resources standardized
+      to 4/8 GB, port table and health claims corrected, backup coverage
+      expanded to file volumes, rollback policy = image rollback only,
+      migration policy stated uniformly, TOC and section layout fixed.
+    - deployment-runbook.md: new concise linear install guide for
+      first-time customer installs (online + offline), with verification
+      checklist and cross-link to deployment.md.
+
+commit 05dd56d2896ba74e4cb155390f5b9791b5e11008
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 21 23:02:11 2026 +0300
+
+    chore(release): bump to 1.4.0
+    
+    Updates .env.example and package.json to match the release tag.
+
+commit faf6f83477eaec0ab63873344d48dbb058a0d638
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 21 23:01:35 2026 +0300
+
+    fix(nginx): raise ReqIF upload limit to 100 MB
+    
+    The /api/v1/ location used nginx's default 1 MB client_max_body_size,
+    which rejected every ReqIF file larger than 1 MB when the app was
+    accessed through the packaged nginx. Real customer files (DOORS,
+    ReqSuite, Polarion exports) range from 1 MB to 30+ MB and all failed.
+    
+    Raises the limit to 100 MB, matching the TraceTest evidence limit.
+
+commit 4766c7c3a9b1c115831b4f8a8a736c4fe23fd1df
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 21 22:57:31 2026 +0300
+
+    fix(reqif): recognize proSTEP-style title and description attributes
+    
+    Adds requirementid / requirement_id / req_id / reqid / sr_id to the
+    title pattern list, and plaintext / richtext / object_text / xhtml
+    to the description pattern list.
+    
+    Previously files like the proSTEP chapter corpus declared these
+    attributes but the mapper didn't recognize them, so every attribute
+    landed in custom_attributes and the title gate blocked the import
+    until the user selected a title manually. Choosing a sparse attribute
+    (e.g. PlainText) silently skipped hundreds of objects.
+    
+    With these patterns, chapter4.reqif auto-suggests requirementID as
+    title and PlainText as description.
+
+commit 1e2f070a00c3c4550f290478fba96b24bb925d5a
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 21 20:35:55 2026 +0300
+
+    fix(compose): pass license and OIDC env vars through to traceboard-backend
+    
+    The .env file previously had no effect for LICENSE_ENABLED, LICENSE_PUBLIC_KEY, LICENSE_FILE, OIDC_ENABLED, OIDC_CLIENT_ID, OIDC_CLIENT_SECRET, OIDC_DISCOVERY_URL, OIDC_PUBLIC_BASE, or SESSION_SECRET because docker-compose.yml uses only explicit environment: entries with no env_file or wildcard.
+    
+    Adds those nine variables to the traceboard-backend service using the same \ pattern as the surrounding entries. All nine names match the reads in licensing.py, oidc.py, and main.py.
+    
+    Defaults preserve fresh-checkout behavior: LICENSE_ENABLED=false, OIDC_ENABLED=false, empty strings for OIDC client settings and LICENSE_PUBLIC_KEY, LICENSE_FILE=/app/traceboard.license, and SESSION_SECRET falls back to the same default as main.py. The pre-existing TRACEBOARD_SUITE_VERSION default bump to 1.4.0 remains intact.
+
+commit 3dd0c2cf846840c3e791b3fb255c9fbe76071a80
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 21 19:21:04 2026 +0300
+
+    chore(release): bump to 1.4.0
+
+commit 0e29aab96483489ab3671477aba6bf7f50579cf3
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 21 19:05:53 2026 +0300
+
+    chore(ci): add Ruff F821 check to pre-commit hook
+    
+    Extends the existing Alembic-heads check with an undefined-name check
+    across the TraceBoard backend. Runs only when a commit touches
+    apps/traceboard/backend/app/**/*.py. Requires ruff on PATH; skips
+    gracefully if unavailable.
+    
+    Documents hook activation (git config core.hooksPath .githooks) in
+    docs/internal/development.md.
+
+commit aad7b49a5af629fed0fb13ee07d6dfe0e9769c8e
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 21 19:00:44 2026 +0300
+
+    docs: add frontend deploy notes to internal development guide
+
+commit 48e0dbdc5c418d70fd0b04bd399e4b8456ef9d38
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 21 19:00:13 2026 +0300
+
+    fix(traceboard): resolve undefined-name bugs found by Ruff F821
+    
+    Real bugs (would have caused 500s on specific endpoints):
+    - hazard_requirement_matrix.py: RelationType missing from app.models import
+    - import_export.py: ALIVE_ITEMS missing from app.models import
+    - items.py: logger never created after import logging
+    
+    False positives (SQLAlchemy Mapped["X"] forward references):
+    - git_commit.py, project_context.py, project_settings.py:
+      added TYPE_CHECKING imports for Project and Item so Ruff can
+      resolve the string forward references without runtime impact.
+    
+    Verified with: ruff check apps/traceboard/backend/app/ --select F821
+    
+    These were surfaced by the Reports & Audit export and Export All Data
+    endpoints returning 500.
+
+commit 872d4427cfecc37da60f54333461d55bfe43a4fe
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 21 18:38:04 2026 +0300
+
+    chore(traceboard): remove orphan notifications bell from standalone NavBar
+    
+    The bell in TraceBoard's standalone NavBar had no click handler.
+    When the product runs through suite-shell, that bell is not rendered —
+    suite-shell's own NotificationsBell handles the real notification UI.
+    Removing the orphan avoids a dead button if standalone is ever served.
+    
+    Also refreshes suite-shell-dist.
+
+commit 6f1983a92465b7648a59a9481de135b3a3754a71
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 21 18:18:32 2026 +0300
+
+    build: refresh suite-shell-dist with user management and header fixes
+
+commit 1f45ed10719d249163b9b1202a4fccf69d409524
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 21 15:21:40 2026 +0300
+
+    docs(traceboard): user management sections
+    
+    - user-manual.md: managing users, forgot-password guidance,
+      deactivation semantics, password reset flow
+    - architecture.md: user-management endpoints and admin logging notes
+    
+    Also notes doc drift to be fixed with the notification/menu
+    restoration follow-up: user-manual.md references Restart Tour
+    and Sign Out in the user menu, neither of which is currently there.
+
+commit 976b97be85974888af14955ad93d4bf5c663f203
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 21 15:21:32 2026 +0300
+
+    feat(traceboard): user management MVP
+    
+    Backend:
+    - GET /users/ accepts include_inactive (superadmin-only)
+    - POST /users/{id}/deactivate, /activate, /promote, /demote
+    - Guards: self-deactivation, last-superadmin demotion
+    - Structured logging for admin actions
+    - Audit logging added to superadmin password reset
+    
+    Frontend:
+    - UserManagement component (superadmin-only Settings tab)
+    - User list with search, status filter, superadmin filter
+    - Reset password modal with password generation and copy
+    - Row actions with confirmation dialogs
+    
+    Fix:
+    - NavBar header overflow: visible so header popovers are not clipped
+    
+    Note: audit persistence deferred — audit_log has an item_id FK and is
+    not suitable for user actions. Follow-up: dedicated admin_audit_log.
+
+commit 97e840b7b9ebf62aee5504d821db3d8a770c76aa
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 21 13:23:14 2026 +0300
+
+    chore(ci): reject commits with multiple Alembic heads
+    
+    Adds scripts/ci/check-alembic-heads.py which parses migration files with
+    Python's AST (no regex, no alembic, no DB) and fails if any app's graph
+    has more than one head.
+    
+    .githooks/pre-commit runs the check only when a commit touches
+    alembic/versions/, and blocks the commit if the graph is invalid.
+    
+    Activate with: git config core.hooksPath .githooks
+
+commit 4c897cb9f85425484edc46aa66f6060da93015e5
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 21 13:12:35 2026 +0300
+
+    feat(traceboard): ReqIF import (C1) + verification fixes
+    
+    C1 — ReqIF import feature
+    - Schema-aware mapping (parser, mapper, config)
+    - Preview + confirmed import endpoints
+    - Transactional executor with hierarchy/relation synthesis
+    - Frontend preview/override UI
+    - Migration: reqif_import_staging + reqif_import_logs
+    
+    Fixes applied during C1 verification
+    - XHTML nested content preservation (parser)
+    - /auth/reset-password authorization hardening
+    - Drawer description hydration for Grid/Flow cold-open
+    - UnifiedImportView ReqIF routing + label fix
+    - Empty-title fallback to SPEC-OBJECT/LONG-NAME with skip-warning
+    
+    Test infrastructure
+    - pytest.ini (marker registration, logging level)
+    - conftest.py silences aiosqlite DEBUG noise
+    - New tests: tests/reqif/*, tests/api/test_reqif_preview.py,
+      tests/test_auth_admin_reset.py
+    
+    Ancillary
+    - readiness_score.py: ALIVE_ITEMS soft-delete filter
+    - package.json: 1.2.0 -> 1.3.0
+    - scripts/bump-version.sh: version bump helper
+    - dist-lib, api-client schemas: regenerated
+    - architecture.md, user-manual.md: C1 docs
+    
+    Cleanup
+    - Remove build-check.* artifacts; add pattern to .gitignore
+
+commit 255dcdc73477290c95a48c97425f2750900cfbc6
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 20 21:59:48 2026 +0300
+
+    chore(release): bump to 1.3.0
+    
+    Feature release since 1.2.0:
+    - ReqIF export (live project + baseline-scoped, ReqIF 1.0 and 1.2)
+    - Item soft-delete with recycle bin and audit trail
+    - Suspect-link workflow
+    - Personal work queue
+    - Deterministic item quality checks
+    - Output-quality signals on the audit narrative
+    - Owner normalization to project member email
+    - Snapshot capture fix
+    - Timezone serialization fix
+    - Build system hardening
+    - Demo data hygiene
+
+commit 08ee12ec2ad202237dcaa22f20beb898e092c015
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 20 20:12:34 2026 +0300
+
+    feat(traceboard): baseline-scoped ReqIF export and version selector (B1)
+    
+    Extends the B0 ReqIF export with baseline scope and a version
+    selector. A user can now export a baseline's frozen snapshot as a
+    discrete ReqIF document, or the current project items.
+    
+    Backend:
+    - New ?baseline_id=<uuid> query param on
+      GET /projects/{project_id}/reqif-export.
+    - When baseline_id is set, items come from baseline_items.snapshot
+      (not the live items table), and relations are filtered to those
+      whose both endpoints are in the baseline AND whose created_at is
+      earlier than the baseline's created_at. This is a strict baseline
+      scope: relations added after the baseline are not part of it.
+    - Snapshots are converted to the same accessor shape as ORM Item
+      objects via a small adapter, so the builder works for both paths.
+    - Endpoint validates version in {1.0, 1.2}, verifies the baseline
+      belongs to the project (404 otherwise), and requires project
+      viewer access.
+    - Filename includes a baseline disambiguator when a baseline is
+      exported.
+    
+    Frontend:
+    - Version selector (ReqIF 1.2 / ReqIF 1.0) on the Settings → Data
+      ReqIF card.
+    - Scope selector offering 'Current project items' or any baseline
+      in the project. Baselines are fetched via the generated API
+      client.
+    
+    Performance:
+    - Smart Lock demo: 32 items -> 304 KB in 0.26s.
+    - IMP2: 5,770 items -> 34.6 MB in 2.57s.
+    
+    Tests: 8 focused tests. Baseline snapshot scope, relation
+    exclusion for post-baseline additions, cross-project baseline
+    rejection, version combinations, and regression coverage for B0's
+    live-project export.
+    
+    Verified end-to-end:
+    - Live vs baseline divergence: editing a live item's title after
+      a baseline shows the new title in the live export and the
+      original title in the baseline export.
+    - Relation timestamp filter: bumping a relation's created_at above
+      the baseline's created_at drops it from the baseline export
+      (30 -> 29) while the live export remains at 30.
+    - ReqIF 1.2 emits the 20110401 namespace; ReqIF 1.0 emits the
+      20101201 namespace.
+    
+    Known limitations filed as follow-ups:
+    - Baseline snapshots do not include verification_status or the
+      severity_* / classification columns, so baseline exports carry
+      fewer attributes per item than live exports.
+    - Relation history is not snapshotted. Post-baseline deletions
+      and edits of relations cannot be reconstructed in the baseline
+      export.
+    - Cross-tool validation with Eclipse RMF / ProPr has not been
+      performed.
+
+commit 1b4bcf236c6c10f75e7fdb0ceb44dd6c68975754
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 20 19:10:37 2026 +0300
+
+    feat(traceboard): ReqIF export MVP (B0)
+    
+    Export a project as a ReqIF document for exchange with other RM
+    tools (DOORS, Jama, Polarion). Read-only export; import and
+    attachments are follow-ups.
+    
+    Backend:
+    - New service services/reqif_export.py builds the ReqIF XML using
+      lxml. The reqif==0.1.0 library is used only for validation and
+      round-trip parsing — it has no practical programmatic builder
+      API and no version switch.
+    - New endpoint GET /api/v1/projects/{project_id}/reqif-export.
+      Requires project viewer access. Supports ?version=1.0 or 1.2
+      (default 1.2). Invalid versions return 400.
+    - One SPEC-OBJECT-TYPE per distinct TraceBoard item.type present
+      in the project. Fixed columns map to standard attribute
+      definitions. custom_attributes become inferred-datatype
+      attribute definitions (String, Integer, Real, Boolean, Date).
+    - Internal relations become SPEC-RELATIONS with relation_type as
+      the SPEC-RELATION-TYPE. One flat SPECIFICATION containing all
+      items, no hierarchy.
+    - ReqIF header carries a fresh UUID, creation timestamp, and the
+      TraceBoard tool identity.
+    - reqif==0.1.0 added to backend requirements.
+    
+    Frontend:
+    - 'Export ReqIF' action under Settings → Data, using the same
+      download pattern as the existing XLSX export.
+    - Note in the UI: 'ReqIF 1.2 format. Some tools may require
+      ReqIF 1.0.'
+    
+    Tests:
+    - Empty project produces a valid file with zero objects.
+    - Single-type and mixed-type exports produce the expected
+      SpecObjectType count.
+    - Custom attributes become attribute definitions with inferred
+      datatypes.
+    - Relations become SpecRelations with correct source/target refs.
+    - Version query param changes the namespace and version header;
+      invalid version returns 400; non-member gets 403.
+    - Round-trip test: export -> parse with reqif -> counts match.
+    
+    Verified against the Smart Lock demo:
+    - Source: 32 items, 30 relations, 6 distinct types.
+    - Export: 32 SpecObjects, 30 SpecRelations, 6 SpecObjectTypes.
+    - 304 KB file, parses cleanly with reqif==0.1.0.
+    - ?version=1.2 emits xmlns=http://www.omg.org/spec/ReqIF/20110401/reqif.xsd.
+    - ?version=1.0 emits xmlns=http://www.omg.org/spec/ReqIF/20101201.
+    
+    Not yet verified: cross-tool compatibility with Eclipse RMF, ProR,
+    or a real DOORS/Jama installation. The file parses with our own
+    library but has not been opened by another tool.
+
+commit 15b8c9657351ba2807c5b573c97e18d542a5bf54
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 20 16:47:54 2026 +0300
+
+    fix(traceboard): serialize naive UTC datetimes with Z suffix
+    
+    Timestamps displayed as '3h ago' immediately after an edit. Root cause:
+    the DB stores UTC as naive datetimes (model columns use DateTime
+    without timezone=True). Pydantic v2 serializes naive datetimes without
+    a timezone offset. JavaScript parses such strings as local time, so
+    every timestamp displayed to a user in a non-UTC timezone was offset
+    by their UTC delta — 3 hours in Finland, 5 in New York, etc.
+    
+    Backend (schemas.py):
+    - New TZAwareMixin with a wildcard field_serializer that attaches
+      timezone.utc to naive datetime values during JSON serialization.
+      Aware values pass through unchanged.
+    - Applied to ItemResponse, MyWorkItem, MyWorkAssessment,
+      MyWorkFinding. Every consumer of these responses now sees
+      unambiguous UTC timestamps.
+    - No model column changes, no migration. The underlying storage
+      remains naive-UTC; only the wire format is corrected.
+    
+    Frontend (MyWorkView.tsx):
+    - timeAgo() defensively appends 'Z' to naive ISO strings before
+      constructing a Date. Belt-and-suspenders protection for any
+      endpoint that hasn't yet adopted TZAwareMixin.
+    
+    Verified:
+    - API now returns '2026-09-20T13:34:41.542793Z' for updated_at.
+    - Editing an item and navigating to My Work shows 'just now'
+      instead of '3h ago' for a user in UTC+3.
+    - Other items in the list show timestamps matching their actual
+      edit times, corrected by the UTC offset.
+    
+    Follow-up: other response schemas may still serialize naive
+    datetimes without a Z suffix. Audit them and apply TZAwareMixin
+    where needed. Not blocking, since the frontend defensive parse
+    covers the display path.
+
+commit 7489a643aa2ebee0dea5d7819d3f6aa1cf3cddcb
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 20 15:50:23 2026 +0300
+
+    feat(traceboard-ui): suspect-link workflow frontend
+    
+    Surfaces the backend suspect-link state in the item drawer and
+    Engineering State. A reviewer can now see which relations were
+    suspended by an endpoint edit and clear them with an optional
+    note, producing the audit trail the backend records.
+    
+    Shared types:
+    - Relation type gains suspect, reviewed_by, reviewed_at,
+      review_note fields.
+    
+    API:
+    - New reviewRelation(relationId, note?) helper in api.ts.
+    - OpenAPI schema gains POST /relations/{relation_id}/review.
+    - Generated client regenerated.
+    
+    Drawer relation cards:
+    - Amber 'Suspect' badge when the relation is suspect.
+    - 'Clear' button appears only on suspect cards. Clicking opens
+      a window.prompt for an optional note, then calls the review
+      endpoint and refetches the trace relations.
+    - Reviewer metadata line ('Last reviewed by X on Y') shown when
+      the relation was previously reviewed. Note exposed via tooltip.
+    - Click propagation stopped on Clear so the item does not open.
+    - Loading state during the clear request.
+    - Note: window.prompt/alert is v1 UX; a proper modal is a
+      follow-up.
+    
+    Engineering State:
+    - New 'Suspect links' metric distinct from the existing
+      assessment-relative 'Stale links'.
+    - Help text explains the distinction.
+    - Suspect relations detail table: source, relation type, target,
+      endpoint edited time, last review info.
+    
+    No backend changes in this pass. Verified statically and via
+    type-check; browser verification performed manually:
+    
+    - Suspect badge renders on relations whose endpoints were edited
+      after their last review.
+    - Clear action removes the badge, persists the review, and
+      refreshes the card with reviewer metadata.
+    - Cancelling the prompt leaves the badge intact.
+    - A subsequent endpoint edit re-suspends the relation.
+    - Engineering State reports the suspect_link_count and detail
+      table correctly.
+
+commit 0a313b97ec294f89dcd2df2b9ccc31fbd0e6b17e
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 20 15:25:26 2026 +0300
+
+    feat(traceboard): suspect-link workflow (backend)
+    
+    Classic RM workflow: when an item is edited after a relation is
+    established, that relation becomes suspect until a reviewer
+    explicitly clears it. Produces a governed audit trail that answers
+    'was this change reviewed?' — a question the existing staleness
+    metric could not.
+    
+    Design:
+    - Suspicion is computed at read time from endpoint updated_at vs
+      the reviewed timestamps. No background job, no event listener.
+    - New relations are seeded as reviewed as of their endpoints'
+      current state. Only subsequent edits flag them.
+    - Legacy relations (pre-migration) are grandfathered with
+      CURRENT_TIMESTAMP so nothing is retroactively flagged.
+    - Two distinct metrics now coexist: stale_link_count (assessment-
+      relative, existing) and suspect_link_count (managed workflow,
+      new). They answer different questions and are not conflated.
+    
+    Model:
+    - Relation gains source_reviewed_at, target_reviewed_at,
+      reviewed_by, reviewed_at, review_note — all nullable.
+    - New RelationReview model: append-only history table with FK to
+      relations ON DELETE CASCADE.
+    
+    Migration tb0006_relation_suspect_state:
+    - Adds the five columns.
+    - Creates relation_reviews + index on relation_id.
+    - Backfills existing relations with NOW() so they start non-suspect.
+    
+    Endpoints:
+    - GET /items/{id}/trace/relations now returns suspect, reviewed_by,
+      reviewed_at, review_note on each relation.
+    - New POST /relations/{id}/review. Records the current endpoint
+      timestamps as reviewed, captures reviewer/note, appends a
+      relation_reviews row. Requires project member+.
+    
+    Write paths:
+    - Relation creation (canonical API, seed, import, LLM generation)
+      seeds the review timestamps from the endpoints' current
+      updated_at, so new links start non-suspect.
+    
+    Engineering State:
+    - compute_traceability_state now also emits suspect_link_count and
+      suspect_links. Existing stale_link_* fields unchanged.
+    
+    Tests: 4 focused tests covering the full lifecycle, member-only
+    review access, legacy-null conservative behavior, and Engineering
+    State integration.
+    
+    Verified end-to-end against the running stack:
+    - Migration applied cleanly, 6842 existing relations grandfathered.
+    - Baseline suspect: false.
+    - PATCH on a source item flips its relations to suspect: true.
+    - POST review clears them with reviewer/note persisted on both
+      relation and history table.
+    - A subsequent PATCH re-suspends them.
+    - Engineering State returns stale_link_count: 0 and
+      suspect_link_count: 2 for the demo — the two metrics remain
+      distinct.
+
+commit ee224b2017a1398264fa590f74151cd8a51f6217
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 20 14:59:57 2026 +0300
+
+    fix(tracetest,traceboard): populate snapshots on seed path, add observability
+    
+    Investigation found that test_run_cases.snapshot was never populated
+    in the current database (0 of 3,117 rows), breaking historical run
+    display. The snapshot capture mechanism exists and works on the API
+    path, but the seed path bypasses it entirely.
+    
+    Root causes:
+    1. TraceBoard's seed.py directly INSERTs test_runs and test_run_cases
+       without invoking TraceTest's result-writing handlers, so
+       _capture_snapshots_for_run() never fires for seed-created runs.
+    2. The capture function's only log output was on failure, at WARNING
+       level, so successful captures were invisible and silent failures
+       were hard to distinguish from the seed-path gap.
+    
+    Changes:
+    - seed.py: populate snapshot (short_id/title/description) at seed
+      time when inserting test_run_cases, since the seed has all three
+      fields locally. Comment explains why the seed path must write
+      snapshots directly.
+    - test_runs.py: add INFO logging at three points in
+      _capture_snapshots_for_run — pending capture count, HTTP failure
+      (with status, URL, auth-header presence, body preview), and
+      successful capture count. Enrich the except handler to include
+      the exception message, not just the class name.
+    - scripts/report-snapshot-coverage.py: read-only diagnostic showing
+      overall coverage, per-project coverage, and the 10 most recent
+      runs with their snapshot counts.
+    - docs/internal/development.md: document the diagnostic.
+    
+    Verified end-to-end:
+    - Reseed populates the demo project to 13/13 (100%).
+    - Creating a run via the UI and setting one result to 'pass'
+      populates exactly that one test_run_case's snapshot (1/7),
+      matching the intended trigger condition — only terminal results
+      capture, pending does not.
+    - The remaining 3,104 legacy rows in six other projects have null
+      snapshots. Backfilling them would reflect current item state, not
+      execution-time state, so a backfill decision is deferred.
+    
+    Note: LOG_LEVEL is not set for the TraceTest container, so INFO-level
+    capture logs require LOG_LEVEL=INFO to be visible during debugging.
+    Failure paths log at WARNING and appear by default.
+
+commit 984cb9b6bf6d7739dfd4dede1fd8ebeb8c7df4b5
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 20 14:34:06 2026 +0300
+
+    fix(tracetest,tracedocs): clear display for missing referenced items
+    
+    When a TraceBoard item is soft-deleted, TraceTest runs and TraceDocs
+    document links reference a UUID that no longer resolves. Before this
+    change:
+    - TraceTest displayed the raw UUID as the test-case title, which
+      reads as data corruption.
+    - The read-only drawer offered an 'Edit in TraceBoard' link that
+      dead-ended on a 404.
+    - TraceDocs showed 'item_type · first-8-UUID' with no explanation.
+    
+    TraceTest (App.tsx):
+    - resolveRunTests() adds a distinct 'missing' source state.
+    - Rows for missing items render 'Unavailable item' in muted text
+      with a short explanation and a muted UUID prefix. No raw UUID is
+      shown as a title.
+    
+    TraceTest (ReadOnlyTestCaseDrawer.tsx):
+    - When the live item is missing, replaces the TraceBoard link with
+      a muted 'Item no longer available in TraceBoard.' notice.
+    
+    TraceDocs (App.tsx):
+    - Linked references render as '<type> reference · <uuid-prefix>…'
+      with a muted '(item details not available)' note.
+    - A maintainer comment explains why no live lookup is attempted
+      here: resolving the title would require a frontend-to-TraceBoard
+      call across the product auth boundary. If title resolution is
+      ever needed, add it to the TraceDocs backend response (joined
+      via the existing project-scoped traceability export) rather than
+      calling TraceBoard from the browser.
+    
+    No backend change. No schema change. No cross-product API change.
+    
+    Verified in the browser:
+    - Live-referenced test case displays normally.
+    - Deleting the referenced item shows 'Unavailable item' with the
+      UUID prefix and no dead links.
+    - Restoring the item returns the display to the live title.
+    - TraceDocs link renders the reference note without errors.
+    
+    Note: the deeper issue is that test_run_cases.snapshot is never
+    populated (0 of 3,117 rows), so historical titles cannot survive
+    item deletion. Filed as a follow-up.
+
+commit 66299ece47e2c716764b0a0d05fb1d865cccec07
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 20 13:51:32 2026 +0300
+
+    feat(traceboard): normalize item owner to project member email
+    
+    Item.owner is a free-form String(100) with no FK to users. Users type
+    names like 'Demo User' instead of their email, and any arbitrary string
+    is accepted. The My Work queue matches by email or full_name, so it
+    mostly works, but three other code paths compare owner to email only
+    and silently fail for full-name owners:
+    - Delete authorization (items.py:693)
+    - Owner-change email notification lookup (items.py:622-632)
+    - Anything expecting owner to be an email
+    
+    Server-side normalization on write + matching semantics unification.
+    
+    Backend (items.py):
+    - New _normalize_item_owner() helper. Resolves a raw string to a
+      canonical project-member email (case-insensitive email or full_name
+      match), preserves the 'Unassigned' sentinel, converts blank to None,
+      rejects non-members with 422.
+    - Applied to POST /items/, PATCH /items/{id}, PATCH /items/bulk.
+      BulkItemUpdates schema gains an optional owner field.
+    - Delete authorization now matches against the current user's email
+      OR full_name, aligned with the write path.
+    - Owner-change notification lookup now tries case-insensitive email
+      first, then full_name. Previously the notification was silently
+      dropped when the new owner was a full-name string.
+    
+    Frontend (MemberSelector.tsx):
+    - Suggestion selection now stores the canonical email, not the display
+      name. Dropdown continues to display 'Full Name — email'.
+    - Free-form typing remains enabled; backend validation is authoritative.
+    
+    Backfill:
+    - scripts/normalize-item-owners.py: optional one-shot to convert
+      existing full_name owner strings to canonical emails, scoped to
+      project membership. Dry-run by default.
+    - docs/internal/development.md documents the workflow.
+    
+    Not changed:
+    - No schema migration. No Item model change. No FK.
+    - Import, LLM generation, and seed paths keep their existing owner
+      write behavior.
+    - No cross-product changes.
+    
+    Tests: 9 focused tests covering normalization (email match, full_name
+    match, Unassigned passthrough, null handling, non-member 422) and
+    delete authorization with both email and full_name owners.
+    
+    Backfill dry-run against the demo database:
+    - 36 items normalize cleanly (full_name → email)
+    - 469 'Unassigned' items unchanged
+    - 140 unmatched (owner is a full_name of a user who is not a member
+      of that item's project) — left untouched
+    
+    Verified in the browser:
+    - Autocomplete suggests by full name, stores email.
+    - Save persists canonical email.
+    - My Work still lists the item.
+    - Owner='random-string' returns 422.
+    - Description-only edit on a legacy-owner item succeeds.
+    - Delete as full-name owner succeeds.
+
+commit 922ab0c7eb8d4d018c9e56afb4aa1a05568b795e
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 20 13:08:24 2026 +0300
+
+    chore(build): harden local rebuild workflow
+    
+    Three friction points during WO-SD-2:
+    
+    1. scripts/rebuild-local.sh called docker build directly, which
+       ignores .env. SKIP_OBFUSCATION was set in .env but never reached
+       the build, so every local rebuild paid the multi-minute PyArmor
+       cost and failed hard on any Python syntax error.
+    
+    2. Schema JSON files under packages/api-client/schemas/ had no
+       validation, so a manually-edited schema could silently break the
+       generated client.
+    
+    3. There was no explicit developer workflow for regenerating the
+       API client when backend routes changed.
+    
+    Changes:
+    - scripts/rebuild-local.sh: read SKIP_OBFUSCATION from .env and pass
+      as --build-arg. Matches docker compose build behavior.
+    - .env.example + docs/internal/development.md: document
+      SKIP_OBFUSCATION for local development only.
+    - scripts/validate-schemas.py + pre-commit hook: validate the three
+      api-client schema JSON files before commit.
+    - packages/api-client/package.json: split generate-schemas (fetch
+      from live backends) from generate (build client from checked-in
+      schemas). Restore prebuild so the Docker build produces the
+      generated client from checked-in schemas — required because
+      src/generated/ is gitignored.
+    - scripts/regenerate-schemas.sh: explicit developer step to fetch
+      fresh schemas from running backends and regenerate the client.
+    - packages/api-client/scripts/download-schemas.js: fail loudly on
+      schema download errors.
+    
+    Note: the api-client is generated from checked-in schema JSON at
+    Docker build time. Backend route changes require regenerating the
+    schema JSON (via regenerate-schemas.sh or by hand) and committing
+    the schema, not the generated client.
+
+commit 5e54c69a52d64d0fbb04627c56ef1d6906321fa4
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 20 12:27:55 2026 +0300
+
+    refactor(engineering-state): disambiguate coverage metric names
+    
+    Engineering State and Audit Narrative both used the phrase 'executed
+    coverage' to mean different things:
+    - Audit Narrative: tests with documented results / total tests
+    - Engineering State: requirements with a directly linked executed
+      test / total requirements
+    
+    The two numbers could appear side by side in the same view (e.g.
+    '100% executed' above 'Req executed 0%') and read as a contradiction.
+    Both numbers were correct; the shared vocabulary was the problem.
+    
+    Frontend (EngineeringStateView.tsx):
+    - Summary line: '100% executed, 100% verified.' ->
+      'Test execution: 100% · Test verification: 100%.'
+    - Per-requirement labels: 'Req executed' -> 'Requirement verification'
+      (hint: 'requirements with a directly linked executed test');
+      'Req verified' -> 'Requirement test coverage' (hint: 'requirements
+      with any directly linked test (any status)').
+    - Baseline Readiness caption reworded to match.
+    
+    Backend (engineering_state.py):
+    - Baseline readiness check detail reworded to 'Requirement verification
+      coverage (direct requirement→test link)'.
+    
+    No computation changed. No metric field, formula, count, threshold,
+    or comparison operator was modified.
+
+commit 0716f28791104cb5f1dd48811687eb349f2a5640
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 20 11:30:11 2026 +0300
+
+    chore(scripts): add demo-project cleanup utility
+    
+    Repeated calls to POST /seed/ create new Smart Lock demo projects
+    without removing prior duplicates, so local development databases
+    accumulate stale copies over time. This script keeps the seeded
+    project (a0000000-0000-0000-0000-000000000001) and deletes any
+    other project named 'Smart Lock System (Demo)'.
+    
+    - Dry-run by default; --apply to execute.
+    - Cleans cross-database tables first (test_runs, test_run_cases,
+      test_evidence, document_*), then git_commits, then the project.
+    - Uses to_regclass to skip tables that may not exist in a given
+      deployment.
+    - One transaction per project.
+    
+    Manual maintenance tool. Not run automatically. Not part of seed.
+
+commit 9fbd212c32a9e1805b24131aabb50fb3acaf8ea9
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 20 10:11:12 2026 +0300
+
+    feat(traceboard): soft-delete fallout sweep, audit trail, recycle bin (WO-SD-2)
+    
+    Follow-up to WO-SD-1. The core item soft-delete landed but current-state
+    reads in dashboards, reports, Engineering State, and services still
+    counted deleted items. This sweeps the remaining sites, records
+    delete/restore events, and adds a minimal recycle bin UI.
+    
+    Section A — read-site sweep:
+    - Applied ALIVE_ITEMS / deleted_at IS NULL to current-state reads
+      across dashboard aggregations, events feed, traceability export,
+      reports, audit narrative source, consistency analysis, Engineering
+      State, git service, hazard/requirement matrix, impact analysis,
+      trace completeness, and assessment dependency rule-item discovery.
+    - Raw SQL dashboard queries gained explicit items.deleted_at IS NULL.
+    - Intentional exceptions retained: delete/restore handlers, explicit
+      include_deleted paths, import-clear hard-delete paths, and
+      assessment dependency propagation.
+    
+    Section B — audit trail:
+    - Delete now writes an ItemHistory row (field=deleted_at, new_value
+      =timestamp, changed_by=actor).
+    - Restore writes an ItemHistory row (field=deleted_at,
+      old_value='deleted', new_value=NULL).
+    
+    Section C — recycle bin:
+    - GET /items/ accepts only_deleted=true. Requires include_deleted=true
+      and member+ role. Project-scoped.
+    - List view gains a 'Recently deleted (N)' link that opens a deleted-
+      items list with per-row Restore. Deleted-item drawer deep-linking
+      deferred.
+    
+    Build fix (unrelated):
+    - Added a from app.schemas import (...) line to projects.py. A merge
+      had left an orphaned import block, causing a SyntaxError that broke
+      PyArmor obfuscation and TypeScript builds.
+    - Added the /api/v1/items/{id}/restore path to
+      packages/api-client/schemas/traceboard.json. The generated client
+      is produced from this schema at build time; the restore endpoint
+      was missing from the source.
+    
+    Documentation:
+    - architecture.md and user-manual.md updated with the soft-delete
+      lifecycle.
+    
+    Tests: 10 focused soft-delete tests. Regression selection: 27 passed.
+    
+    Verified in the browser:
+    - Dashboard requirement count drops after delete.
+    - Recycle bin renders, restore works.
+    - Tree, Grid, Flow views all hide/show the item correctly on
+      delete/restore across multiple items.
+    - ItemHistory records events on both delete and restore.
+
+commit a68b4ad1e6e62dbd6bb5e183a284c0f14499e40e
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 20 00:30:48 2026 +0300
+
+    feat(traceboard): item soft-delete core (WO-SD-1)
+    
+    Deleting an item no longer destroys the row and its relations.
+    Instead the item is marked deleted and hidden from normal reads.
+    Restore brings it back. This closes a data-loss risk that
+    regulated-industry buyers ask about during security reviews.
+    
+    Model:
+    - Item.deleted_at: nullable timestamp with time zone.
+    - Item.deleted_by: nullable actor string (matches updated_by).
+    - ALIVE_ITEMS predicate exported from the models module for
+      consistent filtering. Grep ALIVE_ITEMS to audit all sites.
+    - Index ix_items_deleted_at for the filter.
+    
+    Migration: tb0005_item_soft_delete (chains from tb0004).
+    
+    Endpoints:
+    - DELETE /items/{id} sets deleted_at and deleted_by. Preserves
+      relations. Assessment-staleness marking and completeness-cache
+      invalidation unchanged.
+    - POST /items/{id}/restore clears both fields. Requires member+
+      role in the item's project.
+    - GET /items/{id} returns 404 for deleted items by default.
+      include_deleted=true requires member+ role and returns the row.
+    - GET /items/ excludes deleted items by default; include_deleted
+      requires member+.
+    
+    Read-site filtering added to:
+    - Item list, search, detail, update, completeness, trace tree,
+      direct relation endpoints.
+    - Item sub-resources: attachments, comments/history, dependencies,
+      document links, external links, git, relations (including three
+      relation lookups missed in the original site list).
+    - New baseline creation (existing baseline snapshots unaffected).
+    
+    Not changed (WO-SD-2 scope):
+    - Dashboards, reports, Engineering State, hazard matrix, impact
+      analysis, consistency checks, audit evidence generation, git
+      service.
+    - Cross-product display policy for TraceTest legacy runs and
+      TraceDocs document links.
+    - Audit events for delete/restore.
+    - Recycle-bin listing endpoint.
+    - Import-clear hard-delete paths.
+    
+    Tests: 8 backend tests covering delete lifecycle, relation
+    preservation, default filtering, include_deleted authorization,
+    restore semantics, new-baseline exclusion, short-ID reservation,
+    and assessment-staleness hooks.
+    
+    Verified end-to-end against the running stack:
+    - Item hidden from list/detail after delete.
+    - DB row preserved with deleted_at and deleted_by set.
+    - 33 relations pointing at the deleted item survived.
+    - Default detail 404s; include_deleted returns the row.
+    - Restore returns 200 and the item is immediately readable again.
+
+commit b89c7af922b89eaf912b0edad55df89bd5340957
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sat Sep 19 23:35:01 2026 +0300
+
+    feat(traceboard): cross-project personal work queue
+    
+    New 'My Work' view aggregating the current user's active work
+    across accessible projects. Read-only aggregation; no new
+    persistence.
+    
+    Backend:
+    - New endpoint GET /api/v1/my-work.
+    - Three categories:
+      - items_owned: items where owner matches the current user's
+        email or full_name, status in active set (excludes done and
+        obsolete), scoped to accessible projects.
+      - assessments_pending: compliance assessments in Proposed state.
+      - findings_pending: engineering findings in Proposed state.
+    - Each list capped at 20; counts are complete.
+    - Batch project-name lookup.
+    - Superadmin bypass matches the existing access pattern.
+    
+    Frontend:
+    - New MyWorkView component with three sections, counts, empty
+      states, and a consolidated 'You're all caught up' when all
+      categories are empty.
+    - New 'my-work' view state and navbar tab.
+    - Item rows deep-link to the item drawer. Assessment and finding
+      rows navigate to the source project's review surface.
+    
+    Tests: 7 backend tests covering empty state, owner matching
+    (email and full_name), active-status filtering, Proposed-only
+    filtering, cross-project scoping, superadmin access, and
+    count-vs-list-length behavior.
+    
+    Known limitations (filed as follow-ups):
+    - Assessment and finding deep links land on the source project's
+      review view but do not focus the specific row.
+    - Item.owner is a free-form string; matching against email or
+      full_name is a v1 workaround until the field is migrated to a
+      user FK.
+    - Proposed assessments accumulate across audit runs; the queue
+      shows all of them. The audit pipeline should supersede prior
+      Proposed assessments for the same (standard, clause, project).
+
+commit 80300f9bf25c578b8cadbbf55df2d06950a66472
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sat Sep 19 22:23:58 2026 +0300
+
+    feat(traceboard): deterministic item quality checks
+    
+    Advisory linting on requirement text — weak modals, vague
+    adjectives, vague quantifiers, placeholders, unreferenced
+    comparatives, ambiguous negations, and short descriptions. Pure
+    pattern-matching, no LLM. Fits the deterministic-core story.
+    
+    Scope:
+    - Requirements only. Tasks, bugs, risks, and hazards are excluded
+      because their prose conventions differ (e.g. 'could' is normal
+      in hazard descriptions).
+    - Computed on the detail endpoint and the write endpoints only.
+      List, search, bulk, and trace-tree responses do not compute
+      flags in v1, avoiding linear cost on large list responses.
+    
+    Backend:
+    - New service: services/item_quality.py
+      - Seven rules + one empty-description check.
+      - Markdown-aware: fenced code, inline code, and link URLs are
+        stripped before matching, so a TODO inside a code example
+        does not fire.
+      - Returns structured flags: rule_id, severity, message, field,
+        matched_text.
+    - schemas.py: new QualityFlag model; ItemResponse.quality_flags
+      field, default empty.
+    - routers/items.py: wire check_item_quality into POST /items/,
+      GET /items/{id}, PATCH /items/{id}.
+    
+    Frontend:
+    - types.ts and packages/shared-types: QualityFlag type;
+      quality_flags optional field on ItemSummary.
+    - Drawer.tsx:
+      - 'Specification notices' block below the obsolete-item warning,
+        rendered only when flags are present. Advisory wording and
+        disclaimer included.
+      - Drawer now retains the PATCH response in local state so
+        quality_flags (computed on the PATCH path) remain visible after
+        save, instead of being overwritten by a list refresh that
+        returns empty flags by design.
+      - Drawer no longer closes on save, so the notices block is
+        visible immediately. This is a behavior change for all saves,
+        not just ones with flags; consistent with iterating on a
+        specification in place.
+    
+    Tests: 11 new tests covering each rule, Markdown exclusion,
+    non-requirement exclusion, the empty-description rule, and a
+    regression case against the Smart Lock demo text.
+    
+    Verified in the browser:
+    - REQ-001 with clean text: no block.
+    - REQ-001 with 'The system should be fast and user-friendly. TODO
+      check with security team.': block shows 4 flags.
+    - Reverted description: block disappears.
+    - Replacing 'fast' with 'quick': flag disappears (rule is
+      word-list based; synonyms are not caught — expansion of the
+      word list is a future follow-up).
+    - Hazard with 'could': no block, since hazards are not linted.
+    - TODO inside a fenced code block: no placeholder flag.
+    
+    Advisory only — never blocks save, never enters compliance
+    assessments or the review workflow.
+
+commit b28dea402c90b45372dc907e1ff60a08eb6fde0c
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sat Sep 19 19:42:28 2026 +0300
+
+    feat(audit-ui): render output-quality signals
+    
+    Surface the backend quality_signals field in the audit narrative
+    and consistency-check views. The block is informational — it never
+    blocks export or changes any assessment.
+    
+    Frontend:
+    - api.ts: add optional quality_signals field to AuditNarrative and
+      ConsistencyCheckResponse types.
+    - AuditNarrative.tsx: new exported QualitySignalsBlock component.
+      Renders as a small notice with a title, bulleted signal list, and
+      an informational footnote. Absent when the array is empty or
+      missing. Uses role=status, aria-live=polite, and
+      data-export-exclude so the block is not included in exported
+      reports.
+    - AuditNarrative.tsx: block rendered immediately after the
+      persistent audit status/context section, so it appears near the
+      existing 'Review Required' / 'Unverified AI Interpretation'
+      status.
+    - ConsistencyCheck.tsx: block reused immediately above the findings
+      table.
+    
+    The generated client type was not updated because the components
+    import from the local api.ts types rather than the generated
+    client.
+    
+    Verified in the browser:
+    - Empty quality_signals in both views: no DOM element with
+      data-testid=quality-signals.
+    - With backend thresholds temporarily raised, both views render
+      the block with the expected messages.
+    - After reverting the thresholds, the block disappears again.
+
+commit b495b01324fa14a1a2512f623944109fd47c3332
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sat Sep 19 19:03:42 2026 +0300
+
+    feat(audit): deterministic output-quality signals
+    
+    Add three deterministic signals computed on generation output, so
+    reviewers can see at a glance whether a narrative or consistency
+    check may be incomplete. Signals are informational — they never
+    block generation. Model-agnostic: they measure the output, not
+    the model.
+    
+    Signals:
+    - consistency_completeness (ConsistencyCheckResponse): fires when
+      the LLM consistency check returned no findings while the
+      deterministic checks found multiple anomalies. Uses post-filter
+      counts (deterministic after _sanitize_finding, LLM after the
+      status/coverage drop).
+    - section_completeness (AuditNarrativeResponse): fires when a
+      required narrative section is missing or suspiciously short.
+      Reads required sections from narrative_validation.py so the
+      source of truth stays in one place. Falls back to heading lookup
+      in html_content when the structured sections dict has empty
+      content — the modern path populates keys without content and
+      renders the narrative as HTML.
+    - item_coverage (AuditNarrativeResponse): fires when the narrative
+      references fewer than half of the source items.
+    
+    Thresholds are intentionally conservative — chosen to fire only on
+    clearly deficient output — and exported as constants so they can
+    be tuned without touching the signal logic.
+    
+    Backend:
+    - New service: quality_signals.py
+    - narrative_validation.py: required_sections_for_standard()
+      accessor reads the existing pattern dictionaries and normalises
+      human-readable names to response keys.
+    - schemas.py: add quality_signals field to ConsistencyCheckResponse
+      and AuditNarrativeResponse.
+    - routers/audit.py: compute signals 2 and 3 after the final HTML
+      is built; include in the response.
+    - routers/consistency.py: compute signal 1 after the merge; use
+      post-filter counts.
+    
+    Tests: 16 unit tests covering all three signals, both section
+    shapes (populated dict / empty dict with HTML fallback), and
+    supported input shapes.
+    
+    Verified end-to-end in the browser:
+    - A well-formed deepseek narrative returns "quality_signals": []
+    - With MIN_ITEM_COVERAGE_RATIO temporarily raised above 1.0 and a
+      section heading renamed to a nonexistent value, both signals
+      fire with their expected messages.
+    - After reverting the thresholds and the heading, the response
+      returns to [].
+    - The unit tests independently cover all code paths.
+    
+    Frontend rendering is a separate follow-up (Phase C).
+
+commit 84041346aa9975af76713a077dcbcf980609a8c4
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sat Sep 19 17:32:34 2026 +0300
+
+    fix(seed,audit): clean demo noise, render narrative tables
+    
+    Seed hygiene (seed.py):
+    - Remove foreign ID prefixes from risk titles RSK-005 through
+      RSK-008 (each carried 'RSK-001:', 'RSK-002:', etc.), from
+      hazard titles HZD-003 through HZD-005 (each carried 'HAZ-00X:'),
+      and from the three Smart Lock test-run titles (each carried
+      'TR-00X:'). All three patterns produced systematic title-vs-ID
+      consistency findings on every audit run without demonstrating
+      anything about the tool's domain reasoning.
+    - Remove the orphan document_item_links entry pointing to a
+      non-existent item UUID.
+    - Annotate the four deliberately-implausible relations
+      (REQ-001 mitigates RSK-004, REQ-003 mitigates RSK-003,
+      BUG-001 relates-to REQ-003, BUG-003 relates-to REQ-001) as
+      intentional anomalies so future maintainers do not 'fix' them.
+      These demonstrate the audit narrative's relation-domain-
+      compatibility check on the demo project.
+    - Flatten dead if/elif/else branches in relation insertion.
+    
+    Narrative rendering (audit.py):
+    - The backward-compatible 'sections' response path bypassed the
+      GFM-table-capable Markdown renderer, so narratives emitted with
+      markdown pipe tables rendered as raw pipe text. Route those
+      sections through _render_json_response_to_html() so tables
+      render as HTML <table>.
+    
+    Tests:
+    - Regression test confirming markdown pipe tables convert to
+      HTML <table>/<thead>/<tbody>/<th>/<td>.
+    
+    Verified via Smart Lock regeneration after reseed:
+    
+    - sference/deepseek-v4.1-flash: consistency findings dropped from
+      4 to 3 (the test-run title-prefix finding is gone). Remaining
+      findings are the two intentional anomalies deepseek catches
+      plus one natural hazard-risk attribute mismatch.
+    - nebius/openai/gpt-oss-120b: consistency findings dropped from
+      13 to 6 — the four intentional anomalies plus two natural
+      hazard-risk attribute mismatches. Zero title-prefix noise.
+
+commit 461d301a5544237becadcebded5a19f0dc50b8dd
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sat Sep 19 15:59:57 2026 +0300
+
+    feat(audit): scope absence claims, prescribe consistency-check walk
+    
+    Two prompt-robustness changes driven by multi-model testing on the
+    Smart Lock dataset. Neither touches code logic, schema, or UI.
+    
+    1. Classification-grounding rule now scopes 'not present in dataset'
+       to a specific field or attribute of an item that is itself
+       present. Prior wording was over-applied by weaker models to
+       describe whole items that were present in the data — for example
+       claiming '8 risks and 5 hazards are counted but only HZD-001 and
+       HZD-002 are present' when all 13 were in the payload.
+    
+    2. Consistency-check prompt now includes a five-step prescribed
+       walk (title-vs-ID, relation domain compatibility, hazard-risk
+       attribute consistency, bug-scope alignment, trace completeness)
+       and an explicit instruction not to return an empty findings
+       array if any check matches. Prior phrasing was open-ended and
+       some capable models returned 0 findings on data that contained
+       obvious issues.
+    
+    Verified via source-tree harness against four models:
+    
+    - sference/deepseek-v4.1-flash: 3 findings → 4 findings
+      (added the test-run title/ID mismatch)
+    - nebius/openai/gpt-oss-120b: 2 findings → 12+ findings; the 12
+      retained signatures are all legitimate (7 title-prefix
+      mismatches, 4 domain-incompatible relations, 1 hazard-risk
+      attribute inconsistency)
+    - qwen2.5:7b-instruct (local): 6 findings; narrative failed
+      section validation and fell back to the parse-failure paragraph
+    - tensorx/qwen3.8-flash-next: 600s timeout; not usable
+    
+    Tests added are prompt-contract checks: they assert the new
+    constraint text and checklist items are present in the generated
+    prompt string, and that the checklist precedes the JSON
+    instruction. They do not exercise the model call path. Behavioral
+    verification was performed separately via the source-tree harness.
+    
+    Not verified end-to-end: the running container predates these
+    changes. Rebuild and browser verification is the next step.
+
+commit e1f31b841c9d41d39362eaa714ee6fe375d04ec2
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sat Sep 19 14:52:28 2026 +0300
+
+    fix(llm): disable DeepSeek chain-of-thought via structured thinking param
+    
+    The consistency-check LLM call on sference/deepseek-v4.1-flash
+    returned 8192+ tokens of reasoning_content with an empty content
+    field and finish_reason=length, so the JSON parser received
+    nothing and the check reported zero findings.
+    
+    The LLM_DISABLE_THINKING env var was set but nothing read it. The
+    DeepSeek API on Sference disables chain-of-thought via a
+    structured thinking object, not a boolean flag:
+    
+      {"thinking": {"type": "disabled"}}
+    
+    services/llm_client.py:
+    - Read LLM_DISABLE_THINKING at module load.
+    - build_cloud_payload() adds {"thinking": {"type": "disabled"}}
+      when the env var is set and the model family is deepseek.
+    - _call_cloud_api_impl() retries once without the thinking param
+      when a provider returns 400/422 and mentions 'thinking' in the
+      response, so the change is safe for providers that do not
+      recognize the field.
+    
+    Verified against a live consistency-check run on the Smart Lock
+    dataset:
+    - Duration: 7.2s (truncated) → 43.5s (complete)
+    - finish_reason: length → stop
+    - findings: 0 → 3 real findings
+    - The 3 findings (BUG-001 ↔ REQ-003 mismatch, REQ-003 → RSK-003
+      mitigation domain mismatch, HZD-001 likelihood vs RSK-003
+      probability inconsistency) are all evidence-backed and valid.
+    
+    Audit narrative regenerated on the same model now renders as HTML
+    with classification grounding explicit (ASIL-D/ASIL-C from source;
+    DO-178C/IEC 62304 excluded as non-ISO), readiness-score footnote
+    present, and no hallucinated classifications.
+
+commit 2addcb0187d5831c59f17c3172153ccbdd1c9338
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sat Sep 19 14:52:21 2026 +0300
+
+    feat(audit): ground assessments, dedupe before persistence, harden narrative parsing
+    
+    LLM-generated audit assessments on the Smart Lock dataset produced
+    hallucinated classifications (DAL-A, ASIL-C, Class B) not present
+    in source data, three duplicate (standard, clause) pairs, and
+    contradictory status claims for the same item across assessments.
+    A reviewer committing these would record false compliance claims.
+    
+    Prompt rules (services/audit.py):
+    - Classifications may only be assigned if present in source data.
+    - No cross-standard conflation (ISO 26262 uses ASIL/QM only; do
+      not reference DAL, SIL, or other standards' classifications).
+    - Traceability lexicon: 'linked', 'indirectly linked' /
+      'task-mediated', 'not directly linked', 'no path', 'not present
+      in dataset' — each has a specific meaning.
+    
+    Deterministic post-processing (services/assessments.py):
+    - Strip classification tokens not in the audit standard's
+      allow-list. Regex requires a level (ASIL-D, DAL-A, SIL-2) so
+      bare 'ASIL' in prose is not mangled. Logs assessment ID and
+      stripped token.
+    - Detect contradictory status claims on the same (standard,
+      clause) pair; flag with review_reason.
+    - Deduplicate identical-status siblings on (standard, clause);
+      keep by confidence, then explanation length.
+    - Item-level contradiction detection was deliberately removed
+      because it flagged assessments that mentioned the same item
+      across different clauses, which is not a contradiction.
+    - Preserve the existing review workflow — Commit/Reject
+      unchanged, review_reason surfaced through existing provenance
+      JSON.
+    
+    Narrative parsing (routers/audit.py):
+    - Strict JSON remains rendered through the existing path.
+    - Markdown-fenced JSON is retried after fence removal.
+    - Unparseable responses are logged with a 1000-character
+      truncation limit and render a fallback paragraph instead of the
+      raw JSON, so a model that returns prose or malformed output does
+      not dump the blob into the report body.
+    
+    Report:
+    - Key Metrics section now shows the readiness-score formula
+      explicitly: 0.40 × Task Linkage + 0.40 × Test Linkage + 0.20 ×
+      Bug Linkage.
+    
+    Rules:
+    - Note in .clinerules that traceboard-backend runs PyArmor-
+      obfuscated Python in the runtime image; source-string greps
+      against the container return 0 by design. Verify via behaviour
+      or by inspecting the builder stage.
+    
+    Tests added for hallucination stripping, clause-level conflicts,
+    deduplication, clean-pass regression, review_reason persistence,
+    and narrative parsing fallback.
+
+commit 7a1ef5911226d2bf15f4711b1258af580c727dfa
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sat Sep 19 13:34:23 2026 +0300
+
+    feat(audit): ground assessments and dedupe before persistence
+    
+    LLM-generated audit assessments on the Smart Lock dataset produced
+    hallucinated classifications (DAL-A, ASIL-C, Class B) not present
+    in source data, three duplicate (standard, clause) pairs, and
+    contradictory status claims for the same item across assessments.
+    A reviewer committing these would record false compliance claims.
+    
+    Prompt rules:
+    - Classifications may only be assigned if present in source data.
+    - No cross-standard conflation (ISO 26262 uses ASIL/QM only; do
+      not reference DAL, SIL, or other standards' classifications).
+    - Traceability lexicon: 'linked', 'indirectly linked' /
+      'task-mediated', 'not directly linked', 'no path', 'not present
+      in dataset' — each has a specific meaning.
+    
+    Deterministic post-processing (services/assessments.py):
+    - Strip classification tokens not in the audit standard's
+      allow-list. The regex requires a level (ASIL-D, DAL-A, SIL-2)
+      so bare 'ASIL' in prose is not mangled.
+    - Detect contradictory status claims on the same (standard,
+      clause) pair; flag with review_reason.
+    - Deduplicate identical-status siblings on (standard, clause);
+      keep by confidence, then explanation length.
+    - Item-level contradiction detection was deliberately removed
+      because it flagged assessments that mentioned the same item
+      across different clauses, which is not a contradiction.
+    - Preserve the existing review workflow — Commit/Reject
+      unchanged, review_reason surfaced through existing provenance
+      JSON.
+    
+    Report:
+    - Key Metrics section now shows the readiness-score formula
+      explicitly: 0.40 × Task Linkage + 0.40 × Test Linkage + 0.20
+      × Bug Linkage.
+    
+    Tests added for hallucination stripping, clause-level conflicts,
+    deduplication, clean-pass regression, and review_reason
+    persistence.
+    
+    Verified against a live generation on
+    deepseek-ai/DeepSeek-V4.1-Flash:
+    - 6 assessments after dedup, all distinct (standard, clause)
+    - No non-ISO-26262 classification tokens in output
+    - Classifications grounded in source data only
+      (ASIL-D on RSK-005, ASIL-C on RSK-006)
+    - Narrative rendered as HTML; readiness-score footnote present
+    
+    Note: traceboard-backend runs PyArmor-obfuscated Python in the
+    runtime image, so source-string greps against the container
+    return 0 by design. Code presence must be verified via behaviour
+    or by inspecting the builder stage, not by grep in the runtime
+    container.
+
+commit 2bab04179b0d8d479e93d4e16e4ab431724e45a8
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sat Sep 19 11:41:25 2026 +0300
+
+    docs(manual): renumber Introduction subsections 1.1 through 1.9
+    
+    The Introduction chapter had broken numbering: duplicate 1.0.x
+    subsections (two 1.0.2s, two 1.0.3s) and a sequence that did not
+    match the visible order. Renumbered sequentially and reviewed
+    content for consistency.
+
+commit d0439c157ef08664bed032a4887f0250aae65552
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sat Sep 19 11:41:15 2026 +0300
+
+    chore(deploy): pin 1.2.0 across compose, package.json, and .env.example
+    
+    Align the version pins used by dev, demo, and the packaged suite:
+    
+    - docker-compose.yml: bump all TRACEBOARD_SUITE_VERSION defaults
+      1.1.8 → 1.2.0 (build args, image tags, runtime env) for all four
+      services. Fix the stale '1.1.3 names declared below' comment.
+    - .env.example: add TRACEBOARD_SUITE_VERSION=1.2.0 so fresh clones
+      start on the current release.
+    - package.json: root version 1.1.8 → 1.2.0.
+    - scripts/rebuild-local.sh: read the version from .release-version
+      and pass --build-arg TRACEBOARD_SUITE_VERSION explicitly, so the
+      baked-in version matches the file instead of falling back to the
+      compose default. Recreate rq-worker alongside the other backends
+      (it shares traceboard-backend's image and must be recreated when
+      that image changes).
+
+commit 7dbbfdcb5f4ba76ce7fc0c0f07cd2c7e28fe5e2a
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sat Sep 19 10:09:15 2026 +0300
+
+    feat(tracetest): add search, count, and clear to the Test Cases list
+    
+    The Test Cases view had no way to find a specific test among a
+    large set, no count of how many were selected, and no way to
+    clear the selection short of unchecking items one by one.
+    
+    Frontend (App.tsx):
+    - Search field filters the visible list by title or short ID.
+    - Count line: 'X of Y selected' at rest; 'X of Y selected (Z shown)'
+      when a filter is active. X is total selected, Y is total tests, Z
+      is visible count.
+    - Clear button empties the selection.
+    - Select All now unions with existing selection instead of
+      replacing it, so a filtered Select All adds rather than clobbers.
+    - Empty state when a filter matches nothing.
+    - Individual checkbox behavior unchanged. Modal, deep-link
+      consumption, and run-creation logic unchanged.
+    
+    Verified in the browser: search narrows the list, count reflects
+    total selection when filtering, filtered Select All preserves
+    prior selection, Clear empties, empty state renders, deep-link
+    still pre-selects 7 tests, and manual runs still create correctly.
+
+commit 8fad49396d2c0cbe8a1398d28700659dc78a8984
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sat Sep 19 09:45:01 2026 +0300
+
+    feat(traceboard): optional project scoping for traceability export
+    
+    The /traceability/export endpoint previously returned every Item and
+    Relation in the database to any authenticated caller. With 6386 items
+    and 6782 relations in a dev database, that is a perf and cross-project
+    isolation concern: any user could read every project's data by
+    calling the endpoint directly.
+    
+    Backend:
+    - Add optional project_id query parameter. When present, requires
+      viewer access to the project (superadmin bypass) and returns only
+      that project's items and only relations whose source and target
+      both belong to the project.
+    - When absent, preserves the previous unscoped behavior but logs a
+      warning: 'Unscoped /traceability/export call; consider passing
+      project_id'.
+    - Include project_id in item output so scoping is observable from
+      the response.
+    
+    TraceDocs:
+    - _fetch_from_traceboard now accepts query params.
+    - _fetch_traceability passes the baseline's project_id so the
+      Coverage Matrix consumes only the relevant project.
+    
+    Verification:
+    - Unscoped: 6386 items, 6782 relations (unchanged).
+    - Scoped to Smart Lock: 32 items, 30 relations, single distinct
+      project_id.
+    - BL-003 Test Plan Coverage Matrix unchanged after the change.
+    - New tests: 4 in TraceBoard, 1 in TraceDocs. Full TraceDocs suite
+      passes. The 12 fail / 10 error in the TraceBoard full suite are
+      pre-existing auth and risk/hazard failures, verified identical
+      on stash.
+
+commit 07b47f77782b3516ad0eef2ff912bbaa615d7144
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sat Sep 19 08:44:59 2026 +0300
+
+    docs(screenshots): add impact analysis dependency graph
+    
+    Captured for the user manual's impact analysis section. Matches the
+    filename already declared in docs/screenshots/README.md
+    (traceboard-impact-graph.png).
+
+commit 97dd1dac423f8eeda095ecef66fc7ff0d32ceb7f
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sat Sep 19 08:40:02 2026 +0300
+
+    chore: remove LibreOffice lock files and tighten gitignore
+    
+    Four .~lock.*# files were committed by mistake on 2026-09-12.
+    They are LibreOffice scratch files and should never have been
+    tracked. Add a .~lock.*# ignore rule so they stay out.
+    
+    Also ignore .vscode/ so editor-specific settings do not enter the
+    repository.
+    
+    The existing /tmp/ ignore rule is anchored to the repo root and
+    does not cover performance_tests/**/tmp/, which is how the lock
+    files were tracked in the first place. The .~lock.*# rule handles
+    that gap without ignoring the fixture directories themselves.
+
+commit 59460846572d8cee16700333049fb520387224b3
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sat Sep 19 08:39:58 2026 +0300
+
+    docs(rules): note that short IDs are per-project, not global
+    
+    Short IDs like REQ-001 and TST-001 are unique per project, not
+    across the suite. Code that aggregates items across projects must
+    scope by project_id or baseline membership before collapsing
+    UUIDs to short IDs. This was the root cause of the Coverage Matrix
+    over-inclusion bug fixed in f3847625; capture the invariant so
+    future code respects it.
+    
+    See apps/tracedocs/backend/app/routers/docs.py:_fetch_traceability
+    for the pattern.
+
+commit 7af2d65ede7ad3ceba30ca3dcdcf92acaa3e3975
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Fri Sep 18 21:51:53 2026 +0300
+
+    docs: document Baseline Test Plan → Test Run flow
+    
+    Adds a 'Creating a verification run from a Test Plan' subsection
+    under TraceDocs → Generating Documents. Describes the Create Test
+    Run button, the deep-link into TraceTest, the pre-filled scope, and
+    the baseline_id audit trail. Notes that the Test Plan is a
+    generated view over an immutable baseline, and that multiple runs
+    can be created from the same baseline.
+    
+    Bumps release version 1.1.10 → 1.2.0. The changes since the last
+    bump are a feature set rather than a patch: per-result status
+    change history with actor/timestamp audit, and the Baseline Test
+    Plan → Test Run flow (backend baseline_id column, TraceTest
+    deep-link consumption, TraceDocs action button).
+
+commit eca6077c3a7f6dbeb49fac279029313a8cb1a14c
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Fri Sep 18 20:52:41 2026 +0300
+
+    feat(tracedocs): add Create Test Run button to baseline rows
+    
+    When the Test Plan template is selected, each baseline row now shows
+    a Create Test Run button next to the export actions. Clicking it
+    opens TraceTest in a new tab with the project and baseline in the
+    query string; TraceTest consumes the deep-link and pre-fills the
+    new-run modal with the baseline's test cases.
+    
+    Only renders when selectedTemplate === 'testplan'. Does not affect
+    SRS/DESIGN/USERMANUAL templates or the export flows.
+
+commit 2fa29d867446349686888f05f53e38a70da8dcfd
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Fri Sep 18 20:29:40 2026 +0300
+
+    feat(tracetest): consume baseline deep-link in new-run flow
+    
+    TraceDocs Test Plans will deep-link to TraceTest with the project
+    and baseline in the URL so a user can create a run scoped to a
+    baseline in one click.
+    
+    Frontend:
+    - New fetchBaseline / baselineTestIds helpers in api/tracetest.ts.
+      fetchBaseline calls TraceBoard GET /baselines/{id}; baselineTestIds
+      filters the returned items to snapshot.type === 'test'.
+    - createTestRunApi accepts an optional baselineId and includes it in
+      the POST body when present.
+    - App.tsx consumes /test/?project=<uuid>&baseline=<uuid> on mount:
+      strips the query string via history.replaceState, sets the selected
+      project, fetches the baseline, pre-selects its test cases, pre-fills
+      the run name as '<baseline name> — run', opens the existing new-run
+      modal, and shows a scope banner.
+    - baselineScope is cleared when the modal resets, so a subsequent
+      manual run does not carry the banner or the baseline_id.
+    
+    Verified in the browser: baseline-less runs unchanged, deep-link
+    pre-selects 7 tests and sends baseline_id, refresh does not re-open
+    the modal, invalid baseline surfaces an error without crashing,
+    baseline-without-project opens the modal, and the banner clears on
+    reopen.
+    
+    No backend change. The TraceDocs button that generates this link is
+    a follow-up.
+
+commit e30f1ae55b126b6e5722caf8379875de059feeb5
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Fri Sep 18 19:50:58 2026 +0300
+
+    feat(tracetest): record baseline provenance on test runs
+    
+    A test run created from a TraceDocs Test Plan needs to know which
+    baseline it was scoped from. This is the first step of the
+    Baseline Test Plan → Test Run flow: TraceDocs will deep-link to
+    TraceTest with the baseline ID, and the created run records it.
+    
+    Backend:
+    - New migration tt0003_test_run_baseline adds a nullable
+      baseline_id UUID column to test_runs. No FK: baselines are owned
+      by TraceBoard and cross-product referential constraints are not
+      permitted. The column is a provenance pointer.
+    - TestRun model gains baseline_id.
+    - POST /test-runs accepts an optional baseline_id, validates it as
+      a UUID (422 on invalid), and persists it.
+    - Run response shapes (POST, GET single, GET list, report export,
+      update, basic run response) include baseline_id.
+    
+    No frontend change. The deep-link UI is a follow-up.
+
+commit f38476253963369660764d09072a13843e37ea19
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Fri Sep 18 19:14:20 2026 +0300
+
+    fix(tracedocs): scope Coverage Matrix to the selected baseline
+    
+    The TraceDocs Test Plan generator built its Coverage Matrix from
+    TraceBoard's /traceability/export endpoint, which returns all items
+    and relations globally with no project or baseline filter. TraceDocs
+    then collapsed UUIDs to short IDs, which are reused across projects.
+    Result: a Test Plan for the Smart Lock baseline showed 22 verifying
+    tests for REQ-001 when the baseline contains only 7 tests total —
+    the extra tests came from unrelated projects that happened to share
+    short IDs.
+    
+    The Test Cases section was already correct (it reads baseline.items
+    directly). Only the Coverage Matrix was affected.
+    
+    Fix: in _fetch_traceability, intersect both items_by_id and the
+    relations list with the baseline's item ID set before building
+    req_to_tests. This scopes the matrix without changing the export
+    endpoint, the Test Cases section, or the PDF/DOCX generators.
+    
+    Affects all three callers (PDF, HTML preview, DOCX) intentionally,
+    since they all consume the same function.
+
+commit 9a607dfc8ce937925f50b6558b92f9134b6a487c
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Fri Sep 18 18:13:14 2026 +0300
+
+    chore: tighten prompt-log governance and bump version
+    
+    - .clinerules/Traceboard.md: state that prompt_log.md is evidence of
+      activity, not of correctness; require Base commit to be captured
+      externally by scripts/cline_task_wrapper.py via git rev-parse
+      before each task and never authored by the LLM; flag sub-5-second
+      durations as suspect. Add Base commit to the log entry format.
+    - .release-version: 1.1.9 -> 1.1.10.
+    - scripts/rebuild-local.sh: convenience script for rebuilding the
+      tracetest-backend image and recreating the service locally.
+
+commit 1a192a44aa6c2e54f924df42b18191fdfffb69c3
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Fri Sep 18 18:13:05 2026 +0300
+
+    docs: rename External ID to Source ID in item fields
+    
+    The item field previously labeled 'External ID' is now 'Source ID',
+    matching the UI and reflecting that the value is set on import from
+    an external system (e.g. REQ-001 from a spreadsheet) rather than
+    being a generic cross-system reference.
+
+commit 7d6a48bad31d6e4b79aa29163fd56a9f62a3933d
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Fri Sep 18 18:13:00 2026 +0300
+
+    feat(tracetest): open TraceBoard drawer when deep-linking from test case
+    
+    The read-only test-case drawer's 'View in TraceBoard' link previously
+    landed on the trace view with the trace detail drawer closed, so the
+    user had to click again to see the item detail. The link now carries
+    ?open=drawer in its hash fragment.
+    
+    - ReadOnlyTestCaseDrawer.tsx: appends ?open=drawer to the deep-link URL.
+    - App.tsx: parses the open=drawer param from the hash, sets
+      initialOpenDrawer, and passes it to TraceView. Auth-gates the hash
+      handling so the drawer open only fires once the user is loaded.
+    - TraceView.tsx: opens the drawer on mount when initialOpenDrawer is
+      set, targeting the originally requested item rather than the
+      promoted trace root, and calls onInitialDrawerConsumed so a
+      subsequent navigation does not re-open the drawer.
+    
+    Design doc: work_orders/WO-I-read-only-test-case-drawer-design.md
+
+commit 80be526103c61b153a9455c45509b46a4dbea472
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Fri Sep 18 18:09:47 2026 +0300
+
+    feat(tracetest): record per-result status change history
+    
+    Result updates previously overwrote source_metadata.recorded_by and
+    recorded_at, leaving no trace of who changed a result from what to
+    what, or when. This defeats audit for archived runs where a silent
+    edit six months later is indistinguishable from the original.
+    
+    Backend:
+    - Each result entry inside test_runs.results gains an optional
+      history array with one entry per status transition.
+    - An entry is appended only when the result value actually
+      changes (pending -> pass, pass -> fail). Same-value rewrites are
+      no-ops.
+    - Each entry records previous_result, result, changed_at,
+      changed_by, and method (ui/api/ci_cd).
+    - History is capped at the most recent 50 entries per result.
+    - Legacy entries without a history field upgrade on their first
+      transition.
+    - source_metadata.recorded_at and source_metadata.recorded_by are
+      refreshed on every write for entries that do not carry explicit
+      incoming provenance, so the latest actor/timestamp is always
+      current.
+    - All existing merge paths (PATCH, bulk update, bulk-create)
+      append history. No path replaces results wholesale.
+    
+    No frontend change. Display of history in the read-only drawer
+    is a follow-up.
+
+commit b9bd03e0ef6abeb71af45bb4584f9db54fde1aa1
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Fri Sep 18 13:07:28 2026 +0300
+
+    feat(tracetest): read-only test-case drawer in the run view
+    
+    Adds an info button next to each test case in the run execution
+    view. Opens a read-only drawer showing the full test case
+    definition without leaving TraceTest.
+    
+    - Uses shared @traceboard-suite/ui ItemDrawer for the shell.
+    - Snapshot title, short_id, and description shown in an 'At run
+      time' section when the case has a captured snapshot.
+    - Live metadata (status, priority, owner, verification status,
+      custom attributes, timestamps) shown in a 'Current values'
+      section.
+    - Extends TestItem type with owner, verification_status, and
+      custom_attributes. external_id is not added - the field does
+      not exist in the TraceBoard item schema.
+    - 'Edit in TraceBoard' opens the item in a new tab via
+      /board/#/trace/<uuid>.
+    - No mutation controls, no write requests. Pass/Fail/Blocked and
+      evidence uploads remain on the row only.
+    - Drawer available only in run execution mode.
+    
+    Known follow-up: the deep link lands on Kanban rather than the
+    item's Trace View. The same pattern is used in CommitList and
+    DocumentCommitList and appears not to work from any of them.
+    Diagnostic and fix pending as a separate work order.
+
+commit d4ea4d1a357405d4aa42e2076ce79da6ac4a1313
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Fri Sep 18 12:01:45 2026 +0300
+
+    fix(tracetest): refresh snapshot indicator and risk badges on result update
+    
+    Marking a result performed an optimistic local update and
+    discarded the server response. The 'Current values' indicator
+    therefore persisted until reload, and risk badges flickered as the
+    local state lost and regained enrichment data.
+    
+    Backend:
+    - PATCH /test-runs/{id} now returns the same enrichment as the
+      GET detail response: per-result risk_signals, top-level
+      risk_signals, and risk_summary.
+    - Risk enrichment on PATCH is fail-soft: TraceBoard failure logs
+      a warning and returns empty risk fields rather than failing the
+      result write. Matches the snapshot-capture pattern.
+    
+    Frontend:
+    - handleSetResult replaces the local run with the PATCH response
+      instead of discarding it. The optimistic update remains for
+      immediate feedback and is superseded by the authoritative
+      response.
+    
+    Verified: backend suite 85 pass, frontend typecheck passes, and
+    in-browser result updates now refresh both the snapshot indicator
+    and risk badges without a reload.
+
+commit 3b26ef6036c3f670f9abf5e66c6c173168d82d84
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Fri Sep 18 11:17:04 2026 +0300
+
+    docs: describe historical test-case snapshots in TraceTest
+    
+    Test-case title, short_id, and description are now captured at
+    first execution (Pass/Fail/Blocked) and preserved independently of
+    later TraceBoard edits. Runs without a snapshot fall back to live
+    values with a visible 'Current values' indicator.
+    
+    Documents the behavior in the user manual and refines the
+    capability inventory where it described test execution.
+
+commit 9888e63256f511df960b68e560928a74b1a59e85
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Fri Sep 18 10:49:51 2026 +0300
+
+    style(tracedocs,tracetest): remove shared Navbar render
+    
+    Work Order A removed the Super Admin and Logout portion of a
+    duplicate controls row. The same row also rendered a theme toggle
+    and product switcher via the shared @traceboard-suite/ui Navbar,
+    duplicating the suite shell's own top bar (a separate component at
+    apps/suite-shell/src/components/NavBar.tsx, capital B).
+    
+    Remove the shared Navbar render and import from both products.
+    TraceBoard was already clean; the shell header remains the single
+    source of top-bar controls for all three products.
+
+commit 5da921d9815299d4f9deacad971059fa8558fb7d
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Fri Sep 18 09:31:44 2026 +0300
+
+    feat(tracetest): prefer execution-time snapshots in the run view
+    
+    The execution row and selected-run detail resolved test-case
+    title, short_id, and description from the live TraceBoard
+    collection. Archived runs therefore showed the current values,
+    not the values the tester saw when executing the run.
+    
+    - Add TestRunCaseSnapshot type and snapshots field to TestRun.
+    - Add resolveRunTests helper that prefers snapshot values, falls
+      back to live data, and returns a source marker.
+    - Execution row and selected-run detail both use the helper.
+    - Render a small 'Current values' indicator on rows using live
+      fallback when no snapshot is present.
+    - Preserve rows for deleted test cases: snapshot content renders
+      even when the live item is gone; a fully missing case still
+      renders using its test ID.
+    - snapshots and results remain separate; result status, notes,
+      evidence, and risk signals still come from run.results.
+    
+    Verified in browser: executed a test case, edited its description
+    in TraceBoard, and confirmed the run view still showed the
+    original description from the snapshot. Deleted a test case and
+    confirmed the row rendered from the snapshot.
+
+commit 0e816bb08e7d81822045869e692a269cbfd8ae95
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Fri Sep 18 01:42:12 2026 +0300
+
+    feat(tracetest): snapshot test-case fields at first execution
+    
+    TraceTest resolved test-case title, short_id, and description live
+    from TraceBoard on every render. Archived runs therefore showed
+    current values, not the values the tester saw at execution time.
+    The PDF report had the same problem — the most audit-facing
+    artifact in the product was reconstructing history from live data.
+    
+    Backend:
+    - Forward migration tt0002 adds a nullable JSONB 'snapshot' column
+      on test_run_cases. Downgrade refuses to drop the column
+      (historical data). No backfill for existing runs.
+    - Best-effort capture on first execution: when a result is
+      recorded with status pass/fail/blocked, the router fetches
+      short_id, title, and description in ONE batched TraceBoard
+      request and writes the snapshot where snapshot IS NULL.
+    - Capture is wired into bulk-result update, PATCH result update,
+      and bulk-create. Create-from-commit is pending-only and does
+      not capture.
+    - Snapshot write failures never fail the result write. A later
+      result on the same (run, case) retries capture.
+    - Run list and detail responses include a 'snapshots' map keyed
+      by test-case ID. Empty when absent.
+    - Report route loads snapshots for all requested runs in one
+      bounded query, attaches them to each run dict, then fetches
+      live items only for missing IDs. Skips the TraceBoard fetch
+      entirely when all cases are snapshotted. Emits an all/mixed/none
+      note near the results section.
+    
+    Tests: 20 new focused tests covering migration contract, capture
+    gating, batching, overwrite prevention, TraceBoard failure paths,
+    report preference, and note selection. TraceTest suite: 85 pass.
+
+commit b82cd1061da828bee9737db4651273f754b642d0
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Thu Sep 17 23:59:33 2026 +0300
+
+    feat(tracetest): show test description preview in the run view
+    
+    Test case descriptions hold the procedure the tester reads before
+    recording a result. They were loaded by the frontend via
+    fetchTestItems() but not rendered. Add a DescriptionPreview under
+    each test name in the test-run execution view:
+    
+    - Up to two lines with ellipsis via -webkit-line-clamp
+    - 'Show procedure' / 'Hide procedure' toggle for descriptions
+      longer than ~160 characters
+    - Empty or whitespace-only descriptions render nothing
+    - Pass/Fail/Blocked controls remain in their own flex sibling and
+      do not shift when the preview expands
+    
+    No backend change; the description was already in the items
+    response.
+
+commit 33502b4eb599ab8cc096329e484af7a415a97ebf
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Thu Sep 17 22:52:41 2026 +0300
+
+    style(tracedocs,tracetest): remove redundant local project selectors
+    
+    Both products rendered a local project selector inside their
+    content area, duplicating the suite shell's top-bar selector. The
+    local one could drift from the shell's value, crowded the panel
+    header, and duplicated UI that the shell already provides.
+    
+    Remove the local selector from both products. The state variable
+    that reads from the shared TRACEBOARD_ACTIVE_PROJECT_ID key stays
+    — it still drives document/test fetching and project-dependent
+    effects. Only the JSX dropdown rendering is removed.
+    
+    TraceDocs also loses its paired 'TraceDocs' section heading inside
+    the content area (the shell tab already identifies the product).
+    TraceTest keeps its descriptive subtitle paragraph.
+
+commit 1f0a7a9a5d3eccd4b81c8ddb95799ceda5071d66
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Thu Sep 17 22:16:28 2026 +0300
+
+    feat(tracedocs): folder remove/delete semantics and empty trash
+    
+    Folder action:
+    - Rename the folder action from Delete to Remove folder to reflect
+      its move-up behavior
+    - Add a confirmation dialog for non-empty folders with two actions:
+      Remove folder only (contents move to parent) and Delete folder
+      and contents (soft-delete documents, hard-delete folders)
+    - Recursive document and subfolder counts shown in the dialog
+    - Empty folders removed without confirmation
+    - Backend supports ?cascade=true alongside the existing ?force=true
+    
+    Empty trash:
+    - New DELETE /api/v1/docs/documents/trash?project_id= purges all
+      soft-deleted documents and cascades their attachment rows
+    - Best-effort removal of attachment files after commit
+    - GET /api/v1/docs/documents/trash/count returns the pending count
+    - Recycle Bin modal shows the count and an Empty trash action
+
+commit 0af079f67d2637deae2b2dffed84f227f13f1c8b
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Thu Sep 17 21:22:04 2026 +0300
+
+    fix(tracedocs): resizable sidebar and preserve tree scroll on folder click
+    
+    Two improvements to the document tree sidebar:
+    
+    1. Resizable sidebar with a drag handle. Bounds 200-600px, default
+       280px. Width persisted in localStorage. Main content reflows to
+       the remaining space. Tree contents hold intrinsic width so long
+       document names remain reachable via horizontal scroll.
+    
+    2. Folder click no longer resets the tree's scroll position.
+    
+       Root cause: the folder-fetch useEffect included selectedFolderId
+       in its dependency array, so every folder click triggered a
+       refetch, swapped the tree for a loading spinner, and remounted
+       the tree with scrollTop=0. Removing selectedFolderId from the
+       deps leaves the fetch reacting only to project and tab changes.
+       Folder mutations still trigger explicit refetches.
+    
+       Also adds defensive scroll preservation: passive scroll tracking,
+       a useLayoutEffect restore with multiple timers, overflowAnchor:
+       none, and preventDefault on folder row mousedown. These are
+       harmless with the real fix in place and catch regressions if the
+       tree ever remounts transiently again.
+    
+    Verified with a 1ms scrollTop/scrollHeight poll: folder click now
+    produces only a small content-height increase and no scroll jump.
+
+commit 320a6c4bc55e8385e1cec5aeb95cd60790faecc6
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Thu Sep 17 19:02:24 2026 +0300
+
+    fix(tracedocs): authenticated attachment download and large-document preview guard
+    
+    Two issues surfaced during import testing:
+    
+    1. The Download original link in the import results view used a
+       bare URL, which sends no Authorization header and returns
+       401/403. Replace with an authenticated fetch + Blob download
+       helper. On failure, surface the error inline.
+    
+    2. Opening a large imported Markdown document froze the browser
+       tab because react-markdown renders the full AST on the main
+       thread. Add a size-based preview guard: content over 512 KiB
+       skips Markdown rendering and shows a placeholder with a
+       Download Markdown button. The source textarea remains usable.
+    
+    Verified against 21.4 MB (placeholder, responsive, downloadable),
+    605 KB (placeholder, fast), and 494 KB (preview renders in ~2s).
+
+commit e5b1822934a5747d22b305d0fb9f3a93ffeb43d5
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Thu Sep 17 18:19:04 2026 +0300
+
+    style(tracedocs,tracetest): remove duplicate shell controls
+    
+    The suite shell already provides theme toggle, notification bell,
+    and Account menu in the top bar. TraceDocs and TraceTest each
+    rendered a redundant second row with user name, Logout button,
+    theme toggle, and product dropdown. Remove the duplicate row from
+    both products.
+    
+    Also remove the redundant 'Documents' icon and heading above the
+    TraceDocs sidebar buttons. The buttons now sit cleanly below the
+    tab bar without touching the separator line.
+    
+    TraceBoard was already clean and is unchanged.
+
+commit c69ac1e33e51c0f6a26a0af39dbfb544f85087c3
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Thu Sep 17 17:51:59 2026 +0300
+
+    feat(tracedocs): document import with folder hierarchy and safe re-import
+    
+    Imports Markdown, DOCX, and TXT documents into TraceDocs while
+    preserving folder structure, source files, and provenance.
+    
+    Backend:
+    - Preview classifies manifest entries by extension; unsupported
+      files returned separately and excluded from cap calculations
+    - Per-file import runs reservation and document creation in one
+      transaction under a project advisory lock
+    - resolve_folder_path creates nested hierarchy under destination,
+      case-insensitive sibling merge
+    - Attachment cap and session cap distinct: over-cap files import
+      without attachment; session cap returns 413 session_cap_exceeded
+    - NUL bytes handled per-format: stripped for .txt with
+      NULL_BYTES_STRIPPED warning, rejected as 422 invalid_content
+      for Markdown/DOCX
+    - Duplicate detection queries the attachment table first, with
+      provenance fallback; soft-deleted documents restored on match
+    - On duplicate, if existing folder_id is NULL and import target is
+      set, document is moved to the target; existing folders preserved
+    - IntegrityError on the attachment hash constraint recovered as
+      duplicate_recorded rather than 500
+    - Conversion failures return 422 with structured reason
+    
+    Frontend:
+    - DocumentImportModal with file/folder picker, preview, per-file
+      title editing, include/exclude toggles, sequential upload loop
+    - Folder selection strips the selected root name from
+      webkitRelativePath so subfolders are preserved
+    - ImportManifestTree renders supported files only, with a
+      collapsed section for unsupported files
+    - ImportResults shows per-file outcomes with links and download
+      links for retained originals
+    - Client-side SHA-256 in a Web Worker with server fallback
+    - Loop continues past per-file failures; stops only on session
+      cap, disk full, user cancel, or three consecutive network
+      failures
+    
+    nginx:
+    - Explicit client_max_body_size 512M and
+      proxy_request_buffering off on /api/v1/docs/ so large uploads
+      reach the backend rather than being rejected at the proxy
+    
+    Known follow-ups (not in this commit):
+    - Attachment download link returns a bare URL without an auth
+      header; clicking fails with 401/403
+    - Large Markdown files freeze the TraceDocs editor because
+      react-markdown runs on the main thread with no size limit
+    - Trash accumulates soft-deleted documents that block re-import
+      until restored; a periodic purge would help
+    - TraceDocs has no Playwright harness; browser coverage is manual
+
+commit dd39fae863f2b643b06425480e61ec990cd48a75
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Thu Sep 17 16:05:51 2026 +0300
+
+    feat(tracedocs): add document import UI and harden import pipeline
+    
+    Frontend for the import feature plus backend hardening from testing.
+    
+    Frontend:
+    - DocumentImportModal with file/folder picker, preview, per-file
+      title editing, include/exclude toggles, sequential upload loop
+    - ImportManifestTree renders supported files only, with a collapsed
+      informational section for unsupported files
+    - ImportResults shows per-file outcomes with links to created
+      documents and download links for retained originals
+    - Client-side SHA-256 in a Web Worker; falls back to server hashing
+    - Cancellation stops the loop and calls the session DELETE endpoint
+    - The loop continues past per-file failures (400/409/413-non-cap/
+      415/422/500) and stops only on session cap, disk full, user
+      cancel, or three consecutive network failures
+    
+    Backend:
+    - Preview classifies each manifest entry by extension. Unsupported
+      files are returned in a separate unsupported[] array and no
+      longer count against total_size_bytes or the session cap.
+    - Attachment cap is distinct from the session cap: over-cap files
+      import normally with original_attached=false and a warning.
+      Session cap exhaustion returns 413 with detail
+      'session_cap_exceeded'.
+    - Conversion failures are wrapped in a defensive try/except and
+      returned as 422 with {'detail': 'conversion_failed', 'reason':
+      ...}, never as an unhandled 500.
+    
+    Known follow-up: duplicate detection by SHA-256 has a gap where
+    existing attachments aren't matched, producing a constraint
+    violation on re-import. Tracked for C2.2.
+
+commit 92291cf39a2aff6d26040d81f36a4b7c73e68e79
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Thu Sep 17 14:12:54 2026 +0300
+
+    feat(tracedocs): add document import backend
+    
+    Adds the backend for importing existing Markdown, DOCX, and TXT
+    documents into TraceDocs while preserving folder hierarchy,
+    source files, and provenance.
+    
+    - Document.import_provenance JSONB column for structured provenance
+    - DocumentAttachment model for retained originals with SHA-256
+      and server-derived content type
+    - ImportSession (table tracedocs_import_sessions) for per-session
+      byte reservation across independent uploads
+    - Forward-only Alembic migration g7h8i9j0k1
+    - Pure-Python DOCX-to-Markdown converter (headings, paragraphs,
+      formatting, lists, tables, hyperlinks; warnings for skipped
+      content)
+    - TXT decoding with UTF-8-first chardet fallback
+    - Preview endpoint, per-file import endpoint, session cancel
+      endpoint
+    - Attachment download endpoint with project membership check via
+      TraceBoard /api/v1/projects/{project_id}/my-role
+    - Reservation and document creation in one transaction; project-
+      scoped advisory lock for folder/duplicate races
+    
+    Compatibility route POST /docs/documents/import remains unchanged.
+    Frontend, docs, nginx, and delivery packages unchanged.
+    
+    PostgreSQL migration application and advisory-lock concurrency
+    verification are deferred to C3.
+
+commit 2ffd0151e1dbf3578fd4257200df389fd05285a4
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Thu Sep 17 12:05:29 2026 +0300
+
+    docs(trace): document filters; note unfiltered exports
+    
+    Adds the trace filter reference to the user manual and the API
+    query parameter documentation to the architecture notes.
+    
+    - User manual: five presets, detailed panel semantics, status
+      filtering, URL sharing, and the root/subtree-hiding behavior
+    - Architecture: the three query parameters, traversal semantics,
+      and the client-side status filtering boundary
+    - TraceView.tsx: when filters are active, an inline note near the
+      export buttons states that PDF and Excel exports produce the
+      unfiltered trace
+    
+    Also records the session in prompt_log.md.
+
+commit b3a57235afe7589dca52af35acf0a1f4bc6da837
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Thu Sep 17 09:03:02 2026 +0300
+
+    feat(trace): add filter bar with presets and detailed panel
+    
+    Frontend for the trace filter feature. Backend query parameters
+    were added in the previous commit.
+    
+    - TraceFilterBar with Full, Verification, Safety, Implementation,
+      and Defects presets
+    - Inline TraceFilterPanel with item type, relation type, max depth,
+      and status controls
+    - Filter state in TraceView, synchronized to the hash URL
+    - Server-side filtering via fetchTrace query parameters
+    - Client-side status filtering with subtree hiding
+    - Depth-limit indicator and (depth limit reached) label distinct
+      from the bounded flag
+    - Traceability completeness indicator preserved as a separate
+      element above the tree, independent of filter state
+    - Shared filter state across Tree, Flow, and Grid
+    - Playwright coverage for presets, apply flow, URL round-trip,
+      status hiding, empty results, and shared tabs
+    
+    Playwright execution is blocked by a pre-existing demo-login
+    fixture issue unrelated to this change. Tests are written but
+    not yet observed passing.
+
+commit d24321d856924fc3f7b3eda22443295358f2327a
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Thu Sep 17 02:27:05 2026 +0300
+
+    feat(trace): add item-type, relation-type, and depth filters
+    
+    Extends GET /api/v1/items/{id}/trace with three optional query
+    parameters:
+    
+      item_types      repeated, defaults to all six item types
+      relation_types  repeated, defaults to all eight relation types
+      max_depth       integer >= 1, defaults to unlimited
+    
+    Filtering applies during the iterative traversal, not as a post-walk
+    pruning step. Filtered relations never enter the adjacency map;
+    filtered items terminate the walk at that branch. Nodes at exactly
+    max_depth are included as normal leaves and not marked bounded. The
+    root item is always present. Promotion of non-requirement roots to
+    a requirement remains unfiltered. Status filtering is deliberately
+    deferred to the frontend and is not a query parameter.
+    
+    Response shape is unchanged (recursive TraceNode). Export endpoints
+    are unchanged and continue to produce the unfiltered trace.
+
+commit 077b707128d16b8c021a168d604c4f575a4e0098
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Thu Sep 17 02:09:16 2026 +0300
+
+    fix(api-client): use TraceBoard API OpenAPI path
+
+commit a39447ffb550195f029de825db8aa19537868f1b
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Thu Sep 17 01:06:54 2026 +0300
+
+    refactor(frontend): serve suite shell from the backend image
+    
+    Pass 1 of the frontend consolidation. The main deployment no longer
+    bind-mounts a host-built suite-shell-dist directory into nginx.
+    Instead:
+    
+    - The traceboard-backend Dockerfile builds the full suite shell and
+      copies apps/suite-shell/dist/ to /app/frontend-dist/.
+    - FastAPI serves it at / via a StaticFiles subclass with SPA
+      fallback, returning index.html for non-API paths and 404 for
+      missing assets and unknown /api/ paths.
+    - nginx proxies / to traceboard-backend:8000. API, upload, PDF,
+      logo, favicon, and WebSocket locations are unchanged.
+    - FastAPI developer docs move to /api/docs, /api/redoc, and
+      /api/openapi.json so they no longer collide with the shell's
+      /docs route.
+    - LicenseMiddleware exempts /board, /docs, and /test so the shell
+      loads regardless of license state.
+    - Shell responses carry Cache-Control: no-cache, must-revalidate.
+      API responses manage their own cache headers.
+    
+    Trial-kit and delivery-package continue to use suite-shell-dist/
+    and will be migrated in Pass 2. Immutable asset caching is
+    intentionally disabled for this pass and tracked as a follow-up.
+
+commit b01ed05831d138a363c37f49428fe20cb1dcd615
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 23:38:58 2026 +0300
+
+    chore(release): compose image detection fix, version bump, audit log
+    
+    - release.sh: prefer the registry tag when looking up a built image,
+      falling back to the default compose naming pattern. Fixes the
+      'Image for X was not found after the build' error for services with
+      an explicit image: field.
+    - .release-version: bump to 1.1.9 (published).
+    - .gitignore: ignore docker-compose.override.yml.
+    - prompt_log.md: audit log for this session's prompts and actions.
+
+commit 0775b93bf24973a5c69fbe205055db18f02e802f
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 23:24:41 2026 +0300
+
+    chore: update suite-shell-dist with timeline frontend
+
+commit fe23807c968f40c0f776375064bd5f98ac64a5e7
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 22:20:26 2026 +0300
+
+    docs: document evidence timeline feature
+    
+    Adds a Timeline subsection to the user manual and records the new
+    capability in the product capability inventory with an honest
+    LIMITED qualification covering its item-level scope, four event
+    categories, and structural gaps (legacy status transitions,
+    baseline capture actor).
+    
+    Refreshes the inventory's 'Verified against commit' line to current
+    HEAD.
+
+commit e93cdae0ef7215d597cb4985307cce736ae6f25e
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 22:19:30 2026 +0300
+
+    chore: stop tracking docker-compose.override.yml
+    
+    Local-only compose override; now covered by .gitignore.
+
+commit df9902674bb0d3f0e893ba2c6d2b18fc830de7c7
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 21:37:06 2026 +0300
+
+    feat(timeline): add Timeline tab to item drawer
+    
+    Adds a read-only chronological view of item events to the TraceBoard
+    item drawer. Fetches GET /api/v1/items/{item_id}/timeline and renders
+    field changes, status transitions, test executions, and baseline
+    events newest-first, with an event-type filter, expandable details,
+    and opaque cursor pagination.
+    
+    Reuses the existing drawer tab shell and shared UI primitives. Does
+    not modify the History tab.
+    
+    Known follow-up: the backend response model's 'details' field is
+    serialized without properties in OpenAPI, so the generated client
+    types it as Record<string, never>. The component casts locally to
+    Record<string, unknown> for rendering. A separate backend change
+    should declare 'details: dict[str, Any]' to make the schema accurate.
+
+commit 6f52182116eab2eeed020a06d27a98a799d2d634
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 21:19:29 2026 +0300
+
+    chore(api-client): regenerate TraceBoard client with timeline endpoint
+    
+    Generated by importing app.main from a locally-built backend image
+    and dumping app.openapi(). The /openapi.json HTTP path returns 503
+    when no traceboard.license file is mounted, so the schema was
+    produced directly from the FastAPI app object instead.
+
+commit f3002a10257aff618a60764dd3e543f408d17480
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 20:46:01 2026 +0300
+
+    fix(api-client): correct download-schemas variable name (schema -> json)
+
+commit e23bddbc9c4e23773ffac547af4bce72fdb9b511
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 20:39:27 2026 +0300
+
+    docs: record pre-existing test failures unrelated to recent work
+
+commit d601c4f2b08691f2a161704e999914be9f5a9215
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 20:37:56 2026 +0300
+
+    feat(timeline): add read-only evidence timeline to item drawer
+    
+    Backend only. Adds GET /api/v1/items/{item_id}/timeline — a paginated,
+    read-only chronological view of events drawn from item history
+    (non-status), audit_log status transitions, baseline capture and
+    approval, and TraceTest run executions (direct for test items,
+    derived for requirements via VERIFIES and tasks via COVERS/
+    ASSOCIATED_WITH).
+    
+    Computed on demand, no new schema, no new relations, no migrations.
+    Source-prefixed event IDs give uniform identity across sources.
+    Cursor-based pagination. TraceBoard-owned sources only; TraceTest
+    reads follow the existing engineering_state._load_test_runs degraded
+    pattern.
+    
+    Pre-existing failures in test_auth.py and test_risk_hazard.py are not
+    addressed by this change and fail identically on the previous commit.
+
+commit 922752ed22059b67dcf8c9c60118cbaca2d70251
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 16:11:36 2026 +0300
+
+    compose: bind redis to suite-net only.
+
+commit c09b02d6f4d8cbd92a41e247042127fb85cd5653
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 15:54:07 2026 +0300
+
+    release: add selective publishing and version tracking to release.sh
+    
+    Brings release.sh to parity with release.ps1's selective publishing support (commit ee3ae0f6). Flags: --changed-services=<list>, --previous-version=<v>, --skip-build, --dry-run, and --skip-upload as a no-op in bash.
+    
+    Also tracks the last published version in .release-version, written atomically after image, tar, package, and archive steps complete. Preserves REGISTRY auto-enabling PUSH_IMAGES=1 and uses backend registry image names matching docker-compose.yml and release.ps1. Fixes unquoted argument-count expansion under set -u.
+
+commit ee3ae0f6d4126942a6b0d2cc9d16723aa1f4ba0a
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 14:26:11 2026 +0300
+
+    release: publish every service at each version
+
+commit a6e3ce0f2f3fe3954f5a8f21acacb5a8d42d4d79
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 13:04:57 2026 +0300
+
+    build: refresh suite-shell-dist with kanban spacing fix
+
+commit 8d1492998f3327262cf9ba3e9c807972cffb3111
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 12:29:24 2026 +0300
+
+    style(kanban): consistent vertical spacing between filter chip rows
+
+commit 9aac4bc0f0d972cbbfa30375e0dc166f9f1e5c6a
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 11:22:38 2026 +0300
+
+    build: refresh suite-shell-dist with Phase 3 frontend changes
+
+commit a710755f15d683878b1de932d648cd19a934dae2
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 11:17:05 2026 +0300
+
+    release: bump to 1.1.8 and close requirement-verification refactor
+
+commit 28233b70237f5de37b030266d6f643ada577db2d
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 11:11:06 2026 +0300
+
+    refactor(grid): use verification for direct-test-row gap decision
+    
+    Replaces the direct-test-row's requirementHasImplementingTask check with the API-provided is_complete field on the requirement's verification payload. This aligns the Grid's direct-test-row gap decision with the canonical requirement_verification service.
+    
+    Task-row gap logic is unchanged: those branches continue to check per-chain test status, which is a distinct execution-status signal.
+    
+    Demo Grid count is expected to remain 1 (REQ-003 → TSK-006 → TST-007, test status draft). Runtime verification on the deployed demo will confirm.
+    
+    This is the last frontend consumer of the requirement-verification concept. After this commit, the frontend has no local derivation of requirement-level completeness; it reads the shared service's payload in all three views (tree badge, Flow requirement gaps, Grid direct-test rows).
+
+commit 42c8cdd368de4ed9f3cc3a819f1c06062c21251d
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 10:44:18 2026 +0300
+
+    refactor(flow): split requirement gaps from execution gaps
+    
+    Flow's gap-ID helper has been split into two conceptually distinct functions:
+    
+    - Requirement gaps are read from the API-provided verification payload (matrix.verification_by_requirement_id and tree.verification), which reflects the canonical requirement_verification service result.
+    
+    - Task and test gaps remain computed locally as execution-status signals: does this chain have a passing test?
+    
+    The rename of the file from gapDetection.ts to flowGapDetection.ts and the header comment make the distinction explicit. No visible behavior change on the demo project.
+    
+    The old combined helper is preserved as the execution-gap functions after removing the requirement-gap branch.
+
+commit 28c1e854efaba8570f2f038ba7affca153a3db3f
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 10:13:07 2026 +0300
+
+    refactor(trace): read badge from verification payload
+    
+    Replaces the local implements/verifies child inspection in TraceView
+    with reads from the API-provided data.verification field. The
+    verification payload is computed by the backend's shared
+    requirement_verification service, so this removes the last place the
+    frontend independently derives requirement-level completeness.
+    
+    Risk and hazard roots continue to use the item completeness service.
+    Task/test/bug roots still render no badge (the type guard returns null
+    before verification is read).
+    
+    Verified by API inspection on the Smart Lock Demo project: the trace
+    response for REQ-001 includes verification.is_complete=true and
+    verification.missing_links=[], matching what the previous local
+    computation produced.
+
+commit 0d039b19b26a5eaec4849109604343b3ab8f5b26
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 09:43:14 2026 +0300
+
+    feat(shared-types): add requirement verification payload
+    
+    Adds RequirementVerificationPayload and wires it into TraceNode.verification and ProjectTraceMatrix.verification_by_requirement_id.
+    
+    Also removes the dead local TraceNode and ProjectTraceMatrix interfaces from apps/traceboard/frontend/src/types.ts. The frontend already imports these types from @traceboard-suite/shared-types.
+    
+    This is the shared-types unit of Phase 3 of the requirement verification refactor.
+
+commit 6d38d0ca0a6841fbc4495c55d89b2e9204d8586a
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 09:40:00 2026 +0300
+
+    chore(api-client): regenerate schema against current backend
+    
+    The tracked OpenAPI schema was stale relative to the backend's current serialization. This regeneration aligns the schema with what the backend actually emits and adds the recent contract additions: RequirementVerificationPayload on TraceNode.verification, TraceMatrixResponse.verification_by_requirement_id, and TraceNode source_item_id, requested_item_id, and requested_item_type.
+    
+    Also includes standard serialization churn from the current FastAPI/Pydantic pass. The generated TypeScript client is built from this schema at package build time and is not tracked.
+
+commit 9fe24bc617783048f82d1a275f2614a79f867b57
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 09:32:21 2026 +0300
+
+    feat(api): expose requirement verification on trace and matrix responses
+    
+    The tree response's root TraceNode now carries a verification payload
+    when the effective requested item type is requirement. It is null for
+    promoted task/test searches, for non-requirement items, and for risk
+    and hazard roots.
+    
+    The matrix response now carries a verification_by_requirement_id map
+    covering every non-obsolete requirement in the project (respecting
+    show_obsolete).
+    
+    Both changes are additive. Existing clients that ignore the new fields
+    are unaffected.
+    
+    This is the backend contract unit of Phase 3 of the requirement
+    verification refactor. Frontend consumers will migrate in follow-up
+    commits.
+
+commit 8c24511f5f0166d2188993c06bc867335d25d517
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 02:35:01 2026 +0300
+
+    docs: update requirement verification ADR status for Phase 2
+
+commit c192aa43e9084deb511132ca6d53e676ab051662
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 02:34:51 2026 +0300
+
+    docs: note structural coverage canonicalization
+
+commit 7570eb4ef3c086939eb563ab3d772c3b11911434
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 02:28:37 2026 +0300
+
+    refactor(metrics_coverage_evidence): canonicalize structural coverage metric
+    
+    Replaces the snapshot graph's generic-relation structural coverage calculation with the canonical requirement_verification service. Requirements with tests are now determined by canonical implements and verifies relations only, matching the semantics the audit narrative prompt instructs the LLM to apply.
+    
+    The evidence section's structural coverage value now agrees with what the prompt tells the LLM to reason about, removing a source of narrative contradictions.
+    
+    Execution coverage is unchanged. Relation shape validation is unchanged. The structural coverage calculation ID is bumped from coverage.structural.v1 to coverage.structural.v2 because the semantics changed on non-canonical data.
+    
+    Before/after structural coverage across all 8 projects: Smart Lock, DO-project, IEC, MESSY Project, Project C, D, and DDD22 were identical; IMP2 changed 100.0% to 0.0% intentionally because it has task/test covers relations but no canonical verifies relations. Smart Lock requirements_coverage evidence was byte-identical.
+    
+    The old inline graph-derived structural calculation remains available through the unchanged generic linkage/execution machinery; only structural coverage uses the shared service.
+
+commit e663233c62636351f42f4bfca8d5f61ad6629dac
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 02:21:02 2026 +0300
+
+    refactor(audit): use requirement_verification service for data assembly
+    
+    Replaces the inline requirement/task/test relation classification with the shared requirement_verification service. LLM prompt content is unchanged; only the deterministic data block the prompt is built from is migrated.
+    
+    Intentional behavior change: requirements with both direct and mediated verification are now classified as direct rather than indirect. Total verification counts and trace_chains are unchanged. Three projects in the dev database show this classification correction (D, DO-project, MESSY Project); all other projects and coverage totals are identical.
+    
+    Verified by byte-identical prompt output before and after the migration, eight-project deterministic data-block comparison, and two consecutive pre-migration narrative generations showing equivalent LLM nondeterminism to the before/after comparison.
+    
+    The old inline logic remains commented under LEGACY FALLBACK.
+
+commit 52e11c8eac1afe288d14fdcbf59f89ba931187d1
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 02:09:15 2026 +0300
+
+    docs: mark audit narrative test failure as resolved
+
+commit d6beb98effd60b3252cc58de784f9dd31610f185
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 02:09:05 2026 +0300
+
+    test(audit): correct missing-greenlet test expectation for its fixture
+    
+    The test's fixture intentionally lacks the shared TraceDocs/TraceTest tables, so partial generation with insufficient_data sections is the expected outcome. The test's purpose is to confirm that generate_audit_narrative_core does not raise MissingGreenletError. The removed warning-free assertion over-specified the fixture's actual contract.
+    
+    With the metrics_coverage_evidence shape fix applied, the pipeline proceeds past relation validation and completes normally with partial sections. The revised assertion captures the test's intent.
+
+commit a3b8355cc20107acf8261d005092837915a94c0a
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 02:09:01 2026 +0300
+
+    fix(metrics_coverage_evidence): accept audit data block relation shape
+    
+    The evidence snapshot generator expected relations with source_id / target_id / type, but the audit data block emits source_uuid / target_uuid / relation_type. The mismatch caused a ValueError that blocked the audit narrative's evidence-backed section generation.
+    
+    The generator now normalizes either shape before building the graph. Malformed relations still raise ValueError as before. The narrative pipeline now proceeds past relation validation; downstream insufficient_data sections remain a separate concern.
+
+commit 3032dd0072418e902b72cbd0349641be49130e72
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 01:55:00 2026 +0300
+
+    docs: note consistency check duplicate finding fix
+
+commit 56738d88e653fdfb3d580122a243c3d898f16669
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 01:51:47 2026 +0300
+
+    refactor(consistency): use requirement_verification service for canonical projection
+    
+    Replaces the inline requirement-to-test resolution with the shared requirement_verification service. Status finding logic, execution coverage, and finding generation remain on their existing computations.
+    
+    This supersedes the recent direction-tolerance fix (commit af5da80f); the shared service provides the same tolerance and is the canonical source for both directions.
+    
+    Before/after Consistency Check comparison on all eight projects: one project changed only by removing five duplicate findings caused by duplicate verification relations in DO-project; unique finding identities and all metrics were identical. Smart Lock Demo remained 0 coverage_gap findings, 3/3 design coverage, and 2/3 execution coverage in both runs.
+    
+    The old inline resolution remains commented under LEGACY FALLBACK.
+
+commit b94bb7c4701a7d6adf6be440915105a7a82eb54c
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 01:45:55 2026 +0300
+
+    docs: note reports reverse-direction fix
+
+commit f2b4edcd611fd5ac97f56af6d9fcce445c2f6872
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 01:37:08 2026 +0300
+
+    refactor(reports): use requirement_verification service
+    
+    Replaces the inline requirement/task and requirement/test SQL with calls to the shared requirement_verification service. Report output shape and field names are preserved. tasks_with_tests_pct and tests_passed_pct remain on their existing computations.
+    
+    Intentional behavior change: parent no longer counts as a task link; implements and relates-to no longer count as test links. Canonical reverse orientations are now accepted. No project in the current database uses parent or relates-to in the affected positions, so no visible behavior changed; three existing reverse implements links now count canonically.
+    
+    The old inline logic remains commented under LEGACY FALLBACK.
+    
+    Before/after comparison across all eight projects: 3 intentional reqs_with_tasks increases from reverse REQUIREMENT -> TASK implements links (Project C 0->1, MESSY Project 31->32, D 0->1); all other captured metrics identical. Demo snapshot PDF labels/order/text identical apart from generated timestamp.
+
+commit 05512e8e3808d8a71d9a8b8490fb550f05c2edbb
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 01:27:33 2026 +0300
+
+    refactor(dashboard): use requirement_verification service
+    
+    Replaces the inline requirement/task and requirement/test counts with calls to the shared requirement_verification service. Response shape is preserved. tasks_with_tests remains on _count_linked_items because it measures task-level chain coverage, not requirement verification.
+    
+    Intentional behavior change: parent and relates-to no longer count as task links; relates-to and implements no longer count as test links. Canonical reverse orientations are now accepted. No project in the current database uses these relation types in the affected positions, so no visible behavior changed.
+    
+    The old inline logic remains commented under LEGACY FALLBACK.
+    
+    Before/after comparison across all eight projects in the dev database: identical across 8 projects, both obsolete scopes, and all captured metrics.
+
+commit 0df919b455618241e707cde701591238a9828b0b
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 01:14:38 2026 +0300
+
+    prompt_log: Phase 1 requirement_verification service refactor
+
+commit ff2f010c2153de7c1c8243322d9310f19f8dae98
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 01:08:14 2026 +0300
+
+    refactor(projects): use requirement_verification service in completeness endpoint
+    
+    Replaces the SQL aggregation with a call to the shared requirement_verification service. Response shape is unchanged.
+    
+    The endpoint previously counted parent relations as task links. This migration aligns it with the canonical semantics (implements only), matching Engineering State and the other consumers.
+    
+    Before/after response comparison for all eight projects in the dev database: identical. The old aggregation remains commented under LEGACY FALLBACK.
+
+commit 456fd726f170b289804d3a9f6abee659f871d56f
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 00:59:14 2026 +0300
+
+    refactor(engineering_state): use requirement_verification service
+    
+    Replaces the inline mediated-verification logic with a call to the new requirement_verification service. Engineering State output shape is preserved.
+    
+    Intentional behavior change: relations of type relates-to and parent no longer count as task links; implements and relates-to no longer count as direct test links. Only canonical implements/verifies are accepted, matching the semantics now used by the trace tree badge, Project Matrix summary, Grid, Flow, Consistency Check, and Audit Narrative prompt.
+    
+    Smart Lock Demo project output is verified identical before and after the migration.
+
+commit e8b93ddf6683bce9ff42e26e2b23b093cbe4d636
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 00:53:55 2026 +0300
+
+    docs: record pre-existing audit narrative test failure
+    
+    Captures the root cause of test_audit_narrative_missing_greenlet.py::test_full_narrative_core_generation_without_greenlet_error failing on main. Not caused by any recent change; verified by stashing and re-running. Documents three fix options.
+
+commit 2b9fe7bc1511efd7b3ad9d1b3229e941c8aa488c
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 00:53:54 2026 +0300
+
+    feat(services): add requirement_verification service
+    
+    Pure function that computes structural requirement verification for a set of pre-loaded items and relations. Canonical relation semantics only (implements for task links, verifies for test links), direction tolerant, one mediated hop, bugs/risks/hazards excluded.
+    
+    is_verified and is_complete are status-agnostic; has_executed_verification is the status-aware second signal.
+    
+    Includes a parity suite that proves agreement with Engineering State's current computation on canonical data and documents three intentional divergences (relates-to, parent, and implements on the test side) that will take effect when the service is adopted by consumers.
+    
+    No consumers migrated in this commit.
+
+commit 2f3c1ce42a026b26f9cbbdeb9544d7f661a774a5
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 16 00:07:37 2026 +0300
+
+    updated documentation
+
+commit 439101f1efc77e31c646ba5b9aef912b261fc491
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 23:58:02 2026 +0300
+
+    fix(consistency): handle both verifies and implements directions
+    
+    The consistency service assumed canonical direction for IMPLEMENTS and VERIFIES relations, so it produced no mediated mappings when run against data that predated the direction-reversal migrations. Every test was flagged as an orphan and requirement coverage was reported as 0% on the Smart Lock Demo project despite valid REQ → TASK → TEST chains.
+    
+    The relation maps are now populated in both directions, matching the bidirectional pattern already used by Engineering State and the audit service. Downstream code filters by item type, so the extra entries are harmless.
+    
+    The orphan-test predicate was also fixed: it now uses the derived test_to_req map (which reflects the actual mediation logic) instead of the direct-only test_has_verify_link set.
+    
+    Verified by regenerating Consistency Check: coverage metrics now report 3/3 (100%) and no spurious coverage_gap findings are emitted for the mediated test chain. The REQ-003/TSK-006 workflow mismatch remains.
+
+commit 97b4b31c08c13cb53c4a092b1d488cacaf132e41
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 23:40:55 2026 +0300
+
+    audit: clarify task-mediated verification in the narrative prompt
+    
+    The audit prompt contained contradictory guidance: one section described
+    task-mediated verification as valid structural coverage, another stated
+    that indirect traceability does not replace direct requirement-to-test
+    links. The LLM applied the stricter interpretation and flagged the
+    absence of direct links as a compliance gap under ISO 26262 §7.4.2.
+    
+    The prompt now states TraceBoard's verification model explicitly and
+    points each standard-specific traceability criterion at that shared
+    definition. Real findings (missing HARA, missing ASIL, unverified bugs)
+    are preserved.
+    
+    Verified by regenerating the Audit Narrative against the Smart Lock Demo
+    project: the §7.4.2 finding is no longer reported as a compliance gap,
+    while HARA, ASIL, and bug-to-test findings remain.
+
+commit 9857463b5fafe4d735db82358b717871d30417a6
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 23:29:29 2026 +0300
+
+    audit: clarify task-mediated verification in the narrative prompt
+    
+    The audit prompt contained contradictory guidance: one section described
+    task-mediated verification as valid structural coverage, another stated
+    that indirect traceability does not replace direct requirement-to-test
+    links. The LLM applied the stricter interpretation and flagged the
+    absence of direct links as a compliance gap under ISO 26262 §7.4.2.
+    
+    The prompt now states TraceBoard's verification model explicitly and
+    points each standard-specific traceability criterion at that shared
+    definition. Real findings (missing HARA, missing ASIL, unverified bugs)
+    are preserved.
+    
+    Verified by regenerating the Audit Narrative against the Smart Lock Demo
+    project: the §7.4.2 finding is no longer reported as a compliance gap,
+    while HARA, ASIL, and bug-to-test findings remain.
+
+commit 26e1742f2cd64a672420cb81bd051f225357b868
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 18:18:16 2026 +0300
+
+    prompt_log: flow gap detection alignment
+
+commit 03e9c9126581eab341769aac5c658764f1325512
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 18:18:15 2026 +0300
+
+    build: refresh suite-shell-dist with flow gap alignment
+
+commit 33e9f7c189bef3c9ef56433b4346e89b0651965d
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 18:18:13 2026 +0300
+
+    fix(trace): align flow gap detection with requirement completeness
+    
+    Both flow-mode gap detectors used per-chain logic. Matrix mode counted
+    any item in the task column as a task participant, including bugs, and
+    marked complete requirements as gaps when unrelated direct tests were
+    draft. Tree mode treated bug-type implements children as task
+    participants. Both now apply the requirement-level definition used by
+    Grid, the tree badge, Engineering State, and the Project Matrix
+    summary: a requirement is a gap iff it lacks an implementing task or
+    lacks acceptable verification. Bugs, risks, and hazards are never gap
+    participants.
+
+commit df8823fb6e95ffb711c05993efdc99c064063077
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 17:45:21 2026 +0300
+
+    release: bump to 1.1.7
+
+commit 627dcaf5107e215cc1ee1160ea3e1d8831dd14df
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 17:44:43 2026 +0300
+
+    prompt_log: mediated verification, drawer layout, grid gap diagnostics
+
+commit 1cb6f6cc9f720950e48cad5968a3f4b324cfe5e4
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 17:43:00 2026 +0300
+
+    build: refresh suite-shell-dist with drawer description fix
+
+commit 9a6023f41a55070f9ddd192cd64db85af42df902
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 17:42:58 2026 +0300
+
+    fix(drawer): stop description field overflowing on risk/hazard items
+    
+    The Description container used flex: 1 with min-height: 0 inside a
+    column flex layout. On Risk and Hazard items, the large number of
+    attribute fields below consumed all remaining height, collapsing the
+    container to 0px while the textarea's min-height: 200px caused it to
+    overflow. Sibling fields then painted on top. Made the container size
+    to its content instead.
+
+commit af5da80f960bda35ed47946c6d49a349d6ee261d
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 17:03:18 2026 +0300
+
+    fix(trace): align grid gap diagnostics with completeness
+
+commit 123cf7442e7c6af6143964d4247211161fe7363b
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 15:14:19 2026 +0300
+
+    dashboard: align requirement test coverage with the mediated definition
+    
+    The dashboard's requirement-level test coverage counted only direct verifies links, disagreeing with the project completeness endpoint and Engineering State after the definition change. Aligned to the same direct-or-mediated rule. Task-level test coverage is unchanged.
+
+commit 3b6153ac2c4a00fe9d4ffe00db2eedb789e3b52c
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 15:13:34 2026 +0300
+
+    trace: count task-mediated test verification as requirement verification
+    
+    The completeness rule required a direct verifies relation from test to requirement. The seed data and the standard task-based traceability model place tests on tasks instead, so every seeded requirement was reported as a broken link despite a valid REQ -> TSK -> TST chain.
+    
+    The rule now accepts either a direct verifies link or a verifies link through an implementing task, one level deep. Applied in the Trace tree badge, the project completeness endpoint, and the Engineering State coverage count.
+
+commit 00921a877121906a124276a7c29fdc4279bc4106
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 14:26:58 2026 +0300
+
+    build: refresh suite-shell-dist with completeness badge fix
+
+commit 5e1e034c0fa1532a1a01f3f9fcb3335a715346ae
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 14:04:06 2026 +0300
+
+    trace: use requested item type for completeness badge, not promoted root
+
+commit 208eb0cccd9b70cfebeab0c984d23d1b5c98d72a
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 13:39:40 2026 +0300
+
+    release: bump to 1.1.6
+
+commit bac0d5d14dd4b9a2bd3e6965ddc3a7afdfbe192a
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 13:37:02 2026 +0300
+
+    build: refresh suite-shell-dist with trace tree improvements
+
+commit 2d12d776bd915828e81ea7a03bd35113712a7632
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 13:33:49 2026 +0300
+
+    trace: scope completeness badge to item types where it is meaningful
+
+commit 2f4444e6deb72cad8c15a443dd05f68d01fb7723
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 13:07:31 2026 +0300
+
+    trace: clarify relation direction in tree labels
+
+commit 25a15c979e75863a679b555d401d809c116f5388
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 13:05:57 2026 +0300
+
+    trace: add completeness indicator to single-item tree root
+
+commit dcaed6a907f16c8da6eb433c9bb467e57a544e9d
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 13:05:08 2026 +0300
+
+    trace: remove redundant UUID subtitle from single-item tree
+
+commit edff8fd2172b3f6db891810f8287ef25c5d21348
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 12:18:10 2026 +0300
+
+    build: refresh suite-shell-dist with trace landing changes
+
+commit b537c470e971032454df60928e2219831e1c9dd7
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 12:08:18 2026 +0300
+
+    trace: land on project matrix and add completeness summary
+    
+    The Trace tab previously opened to an empty state requiring the user to
+    choose between typing an item name or clicking 'Project Matrix'. It now
+    lands directly on Project Matrix, with the search field enabled above the
+    matrix and a completeness summary line sourced from the existing
+    /api/v1/projects/{id}/traceability/completeness endpoint. Single-item
+    mode shows a 'Back to Project Matrix' link to return to the project view.
+
+commit 2aa2d8ddd20809d929ea39abf85bc804a4fd517f
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 11:31:40 2026 +0300
+
+    prompt_log: owner display name fix
+
+commit 84446675d704d736bc1a0f24145397b46dc807a8
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 11:31:18 2026 +0300
+
+    build: refresh suite-shell-dist with owner display name fix
+
+commit 8a0e55ada74be1e48006bc798d671cbcf9ba2bca
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 11:08:15 2026 +0300
+
+    shell: store owner as member display name
+
+commit 2f63b47cca9b737865d61d847c5d551a902cea63
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 10:58:41 2026 +0300
+
+    build: refresh suite-shell-dist with kanban owner filter
+    
+    Includes the KanbanView change adding a single-select Owner chip group.
+    Also commits the prompt log entry for the implementation.
+
+commit a5eb9bf15ecc133a193fd506f1e9a529e889781a
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 10:44:51 2026 +0300
+
+    kanban: add item owner filter
+    
+    Adds a single-select Owner chip group to the Kanban toolbar, matching
+    the existing Type and Status filters. Options are derived from the
+    distinct owner values present in the loaded items, plus an Unassigned
+    chip for items with no owner. Filtering is client-side, matching the
+    current Kanban pattern. No data-model or API change.
+
+commit 2aae01dedcaf33c814b744a733007a5031dea58e
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 02:36:31 2026 +0300
+
+    release: bump to 1.1.5
+
+commit c60a63728cd8bc93b7e8c5443b76563db59f5537
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 02:24:53 2026 +0300
+
+    release: bump to 1.1.5
+
+commit 37d63e955ff8bd32d09d2cba674b08fee127b226
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 02:18:33 2026 +0300
+
+    build: refresh suite-shell-dist with relation model changes
+
+commit acd29acbc9f3a9755076c2f6e6393d73a7595622
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 02:16:51 2026 +0300
+
+    prompt_log: relation model alignment (Test → Task verifies)
+
+commit ccce4f2aa9d436de5839b36f9330416d464bfca8
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 02:13:03 2026 +0300
+
+    relations: align Test → Task verifies direction across API, GUI, and seed
+
+commit 80ab7394874991782b3053075d2cbd3631ba94a3
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 01:35:26 2026 +0300
+
+    build: refresh frontend build outputs and prompt log
+
+commit 2a04f5b6a4f8313ff5018a831f7cf75c7730bd06
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 01:35:18 2026 +0300
+
+    build: refresh suite-shell-dist from latest frontend build
+
+commit f38d907b516236eaa4657a5125a0eeba984b8787
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 01:27:21 2026 +0300
+
+    build: automate sync of suite-shell-dist from the shell build output
+    
+    apps/suite-shell/dist/ is the Vite output; suite-shell-dist/ is the
+    directory nginx serves and what gets committed for the Demo server.
+    Nothing in the pipeline copied between them, so a fresh build could ship
+    stale JS unless a developer remembered to run a manual cp.
+    
+    Adds a cross-platform Node script and wires it into both the shell
+    package postbuild hook and the root postbuild hook. The dual trigger
+    covers the Turbo cache-hit case where package lifecycle hooks do not run.
+
+commit 9d6224eb37ea9eb7193f9451c964f722fd65425a
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Tue Sep 15 00:56:57 2026 +0300
+
+    build: sync suite-shell-dist with latest frontend build
+
+commit f21b32f7d1a34a2fd35837adfc88ae740c75c6ab
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 23:50:16 2026 +0300
+
+    fix: route health check outside api v1
+    
+    Use a root-path API client for /api/health and proxy the endpoint in standalone development and the production delivery gateway. Existing /api/v1 client routes remain unchanged.
+
+commit 3d047863eafb7cb67823660258c61603d27e7f3a
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 21:33:08 2026 +0300
+
+    build: sync suite-shell-dist with frontend fixes (manual, manual, version display)
+
+commit a01dad6d9603694edb1dde6d1bbfe88970153e78
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 21:21:42 2026 +0300
+
+    prompt_log: frontend session (stale project, manual, version display)
+
+commit 562098af9292bc0e875dbeb048089ee3f4a22c2c
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 21:16:41 2026 +0300
+
+    shell: display running version from /api/health
+    
+    The GUI previously showed a version string read from the frontend's package.json, which drifts from the deployed release. The backend exposes the authoritative version via /api/health; the UI now displays that value, falling back to unknown if the health check is unavailable.
+    
+    Follow-up: the backend's /api/health handler returns an untyped dict, so the generated client exposes the response as unknown. Adding a Pydantic response model on the backend would document the fields in the OpenAPI schema and let the client generate a typed response. Deferred - this change uses a narrow local interface instead.
+
+commit c349f4a705a75672a3ff301c5506640644dff183
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 21:16:04 2026 +0300
+
+    shell: add user manual link to user menu
+    
+    The user manual PDF is served at /user-manual.pdf. Adding a link so users can find it from the user menu.
+
+commit 84230a8e93229618752a950991b78fc3b933b97d
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 21:15:47 2026 +0300
+
+    shell: recover from a stale cached project_id
+    
+    When the active project_id in local storage no longer exists on the backend, the frontend was retrying requests with that ID and surfacing errors from dashboard creation. It now validates the cached project against the fetched project list on load, and clears the cache when the backend returns 404 for a stale project reference.
+
+commit 856b1240ee221d483d2000d0fb7bd08d2f3aed21
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 20:25:57 2026 +0300
+
+    prompt_log: 1.1.4 version bump and 1.1.3-era cleanup
+
+commit 6dafaf5a0de2092632d08a3e524ccb54956155ac
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 20:22:27 2026 +0300
+
+    release: bump to 1.1.4
+
+commit 3bce6d6f4281784d5d1dfa1d06c014cbfd0626dd
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 20:06:12 2026 +0300
+
+    backend: serve user-manual.pdf at /user-manual.pdf
+    
+    The nginx location block for /user-manual.pdf already proxies to the backend, but the backend had no route or static mount, so the request 404'd. The GUI's Manual button was removed as a result. This restores the file by copying it into the image and serving it with the correct MIME type.
+    
+    The sibling /favicon.ico route has the same missing-asset defect (its target /app/frontend-dist/favicon.ico is not present in the image). Deferred — browsers fall back to the SPA's declared PNG icon, so the favicon route appears to be legacy dead code. Investigate separately whether to delete the route or add a source asset.
+
+commit 5696ab122a7812387a6bceebe82beeb5070477d6
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 19:59:58 2026 +0300
+
+    health: expose TRACEBOARD_SUITE_VERSION in /api/health response
+    
+    The frontend version display previously read from frontend package.json, which is easy to forget to bump. The backend already carries the authoritative version via TRACEBOARD_SUITE_VERSION. Exposing it here lets the frontend display the running version instead of a baked-in string.
+
+commit 8e9cd1d83eb659e08133dba9099ba0860e48295d
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 19:59:41 2026 +0300
+
+    dashboards: return 404 for nonexistent project instead of 500
+    
+    The POST /api/v1/dashboards/ handler let a foreign-key violation from the project_id query parameter bubble up as an HTTP 500. It now checks the project exists and is accessible, returning 404 otherwise. This lets the frontend detect a stale cached project_id and clear its state.
+
+commit cb2ec22ee67015809748b199eb5f937b59762f8b
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 16:56:35 2026 +0300
+
+    release: separate registry and local image names for online vs offline packages
+    
+    Previously a single name per service was used for both the online compose (registry reference) and the offline compose + tar filename (local tag). After the -backend rename, this produced an online package whose compose referenced ghcr.io/nordtrace/traceboard:1.1.3 — a different image from the one the demo server and trial-kit pull. Split into two name sets: registry-prefixed for online, short local for offline.
+
+commit 8089e71299f67fbe0374f47b86a894c873bc05be
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 16:48:24 2026 +0300
+
+    release: require REGISTRY for online package, decouple push from registry
+    
+    Previously, running release.ps1 without REGISTRY silently produced an online package whose compose referenced local-only image tags (traceboard:1.1.3), which customers cannot pull. It now fails fast with a clear message. REGISTRY no longer forces PUSH_IMAGES=1; pushing is opt-in via PUSH_IMAGES as the header documents.
+
+commit c344aa22f7299aed5f1698da978c7ffc1bc387b9
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 16:18:53 2026 +0300
+
+    release: fix frontend staging and document compose version selection
+
+commit b844a2b20291cc0002cb0985e916daca5c183203
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 16:18:11 2026 +0300
+
+    release: add -SkipUpload flag and version-scoped R2 temp objects
+    
+    -SkipUpload allows a dry run of the release build without touching the production R2 bucket. R2 temp objects are now version-scoped (temp-online-<version>.zip / temp-offline-<version>.zip) so two concurrent release runs cannot collide. Final object names are unchanged.
+
+commit dd5b5815e96171e1c797c4b31d44be8494a93810
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 16:06:43 2026 +0300
+
+    release: version-drive compose image tags and current GHCR naming
+    
+    docker-compose.yml now uses \ for the backend image tags. release.ps1 sets this variable during the build and restores it afterward, so a version bump flows through without file surgery. The image lookup in release.ps1 now finds the current ghcr.io/nordtrace/<svc>-backend:<version> names instead of the obsolete traceboard-suite-<svc>-backend:latest tags, which no longer exist on a clean build.
+
+commit 27dc9d923b8fab86efe057b94099ff4cc2697e81
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 15:01:30 2026 +0300
+
+    api-client: write trailing newline in generated schemas
+
+commit 61a556adf9d1e478a0b6f7870ccad153f7a4882c
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 14:59:12 2026 +0300
+
+    api-client: regenerate schemas against current backend toolchain
+    
+    Reflects serialization differences between the previous on-disk schema
+    and the current FastAPI/Pydantic output. No API surface change; no
+    endpoint added or removed. Unicode is emitted as UTF-8 rather than
+    escaped; numeric bounds serialize as int rather than float; the
+    /baselines/{path} redirect operationIds follow FastAPI's current method
+    iteration order.
+
+commit d0c0ac8ef5ba7f380d0c901d30703b55b9c53fa5
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 14:53:59 2026 +0300
+
+    api-client: NormativeStrength enum -> string (matches Task B model change)
+
+commit 48e4ac720052b2445bcf84e6a85d97f714017bf5
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 14:22:57 2026 +0300
+
+    chore: remove superseded delivery/ directory
+    
+    delivery/ predates delivery-package/ and is not referenced by release.ps1 or any operational tooling. Historical delivery context is preserved in docs/decisions.md, with ADR-053 recording that delivery-package/ is canonical for paid-customer distribution and trial-kit/ handles trials. PROJECT_SUMMARY.md is a generated summary; its stale delivery/ reference will be corrected by the next regeneration. The delivery-package and trial-kit convergence question remains a separate design follow-up.
+
+commit 4b855566a0ef51de2a42ec9daa52145930982682
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 13:51:50 2026 +0300
+
+    compose: bind-mount alembic/versions in dev override (prod unchanged)
+    
+    Revisions generated by alembic revision or alembic merge inside a dev container now write through to the host repo instead of the container's writable layer. This prevents recurrence of the ded761bd21ac incident, where a merge revision created inside a container was lost on recreate and had to be regenerated manually. Only docker-compose.override.yml is touched; the base and prod compose files are unchanged, so image-baked revisions remain authoritative in deployed environments.
+
+commit 545eb6dca09dd2ecec43d6880695455759ae978e
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 13:47:14 2026 +0300
+
+    models: align NormativeStrength column to schema (String(10) + validation)
+
+commit 990d1ef9af0a61620cafd33c2a877c3d6fe8cb35
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 13:22:57 2026 +0300
+
+    docs: note bind-mount inode pinning after git pull
+
+commit fca9756560607f6fe0e967c9a6a639c6e58da6f7
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 13:05:08 2026 +0300
+
+    prompt_log: nginx dynamic upstream resolution task
+
+commit 10a44247f03ffdbf6822027cd3a935ee69903740
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 12:29:53 2026 +0300
+
+    fix(nginx): resolve upstream hostnames at request time
+    
+    Uses nginx's variable-based proxy_pass pattern so upstream DNS is re-resolved per the resolver TTL (30s) instead of at config load time.
+    
+    Previously, recreating any backend container (image bump, env change, --force-recreate) gave it a new IP, but nginx kept hitting the old IP until manually reloaded, producing 502s on the demo server. This makes the deploy self-healing: nginx picks up new upstream IPs within one resolver TTL.
+    
+    No behavioral changes to routing, headers, timeouts, or WebSocket upgrade handling.
+
+commit 73aa2848976f858189c832c3a4c8ddacefb5c29a
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 11:08:24 2026 +0300
+
+    feat(trial-kit): add /api/v1/trial-kit for single-download trial deployment
+    
+    - New endpoint returns a self-contained zip: pre-signed license, generated .env with per-download secrets, complete kit (compose, nginx, start/stop scripts for Linux and Windows, frontend dist).
+    - Adds license_issuances audit table (tb0004) with email hashing.
+    - Enforces 5 issuances/hour/IP at the application layer; nginx provides burst protection and Cloudflare real-IP handling for the demo server.
+    - Fixes /api/health to route to the backend instead of the SPA fallback.
+    - Bumps release to 1.1.3.
+
+commit 741012fe7506b525c69e6e9344766ebecaf1a685
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Mon Sep 14 01:27:38 2026 +0300
+
+    chore: remove unused leftover private key from repo
+
+commit 024eb6e253e70307f03886091e1f6ae614b9abfb
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 13 13:56:20 2026 +0300
+
+    prompt_log: Task 10 (product-capability-inventory refresh to 8ed18fd1)
+
+commit 0954af64f551c238d6cd4a72d0ea432f0c0b3285
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 13 13:56:12 2026 +0300
+
+    docs: refresh product-capability-inventory to HEAD 8ed18fd1
+    
+    - Update investigation date and add verified-commit reference.
+    - Resolve "current checkout is dirty" discrepancy (files committed 44727d7d).
+    - Add schema-drift remediation note (tb0001-tb0003, 2026-09-13).
+    - Update deployment section: ghcr.io/nordtrace/*:1.1.2 pinned images,
+      rq-worker sharing the traceboard-backend image.
+    - Add Operational integrity section: fail-fast schema-version guards;
+      production schema changes via Alembic only (TraceBoard dev escape hatch
+      documented).
+    - Fix citations that no longer resolve at HEAD (docker-compose ranges,
+      user-manual, suite-architecture, markdown_converter attribution,
+      RoleContext path, full paths for keycloak/mock_oidc/license_check/
+      engineering_state).
+    - No capability row added, removed, or reclassified.
+
+commit 8ed18fd1847b89f300e27a1a0c17eaf3fc1d78ec
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 13 12:08:47 2026 +0300
+
+    prompt_log: Task 9 (compose images -> ghcr.io/nordtrace, pin 1.1.2)
+
+commit 3084cd84886e544367e61449d04dc0a12b9357cd
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 13 12:07:59 2026 +0300
+
+    docker-compose: move images to ghcr.io/nordtrace, pin 1.1.2
+    
+    The four product services now declare published images instead of relying on
+    locally built tags, so the same compose file works for development (build) and
+    production (pull).
+    
+    docker-compose.yml
+    - traceboard-backend:  image: ghcr.io/nordtrace/traceboard-backend:1.1.2
+    - tracedocs-backend:   image: ghcr.io/nordtrace/tracedocs-backend:1.1.2
+    - tracetest-backend:   image: ghcr.io/nordtrace/tracetest-backend:1.1.2
+    - rq-worker:           image: ghcr.io/nordtrace/traceboard-backend:1.1.2
+                           (same tag as the backend), build: block removed,
+                           depends_on: traceboard-backend: condition: service_healthy
+                           added alongside db/redis.
+    - nginx, db, redis unchanged.
+    
+    The rq-worker STALE-IMAGE HAZARD comment is rewritten: the service now shares
+    traceboard-backend's image, so the two cannot drift apart, and pinning the
+    version tag in docker-compose.yml is the upgrade trigger. The historical
+    incident (worker pinned at traceboard:1.1.0 while the backend was built
+    locally, silently persisting assessments without AssessmentDependency edges) is
+    retained as context.
+    
+    docker-compose.prod.yml (new)
+    - Overrides the four product services with `build: !reset null`, removing their
+      build: blocks so nothing is compiled on the server.
+    - Header documents the production commands:
+        docker compose -f docker-compose.yml -f docker-compose.prod.yml pull
+        docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --no-build
+    - Notes that the GHCR packages are public (no docker login needed) and that
+      db/redis/nginx are untouched.
+    
+    Verification
+    - `docker compose config` merges cleanly for both the dev and prod file sets.
+    - Prod merge contains zero build: keys; all four product services resolve to
+      ghcr.io/nordtrace/*:1.1.2; rq-worker keeps depends_on traceboard-backend
+      (condition: service_healthy).
+    - `docker compose build` produced all three expected tags:
+      ghcr.io/nordtrace/traceboard-backend:1.1.2,
+      ghcr.io/nordtrace/tracedocs-backend:1.1.2,
+      ghcr.io/nordtrace/tracetest-backend:1.1.2 (rq-worker shares the backend
+      image — verified by identical image ID sha256:f599628d8707…).
+    - `docker compose up -d --no-build` brought all seven services up from those
+      images; traceboard-backend healthy at schema revision tb0003_password_resets.
+    - `docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+      --no-build` also succeeds; `pull` resolves the four ghcr references (1.1.2 is
+      not yet published, so the pull is expected to fail until the images are
+      pushed).
+    - Dev behaviour preserved: with both image: and build: present, `docker compose
+      up -d` pulls first and falls back to building when the image is absent
+      (verified with a throwaway compose project).
+
+commit 1ebfa4945cacbce834d287537997eb96161bac77
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 13 11:41:28 2026 +0300
+
+    prompt_log: Task 8 (TraceBoard schema drift remediation, tb0001-tb0003)
+
+commit 0b933417293c0bf6c388107600a18bd3d9bae848
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 13 11:36:14 2026 +0300
+
+    traceboard: create password_resets table (guarded forward migration)
+    
+    Gap: PasswordReset is declared in app/models/__init__.py:385 and the table exists
+    in every database created by the legacy Base.metadata.create_all path, but no
+    Alembic revision ever created it. A fresh install therefore has no table and the
+    password-reset flow fails at runtime:
+    
+      asyncpg.exceptions.UndefinedTableError: relation "password_resets" does not exist
+    
+    Affected call site: app/routers/auth.py (imports PasswordReset; forgot-password /
+    reset-password flow).
+    
+    Migration tb0003_password_resets (Revises: tb0002_items_provenance_columns)
+    - CREATE TABLE password_resets, guarded by an information_schema.tables check:
+        id         UUID PRIMARY KEY
+        user_id    UUID NOT NULL
+        token      VARCHAR(255) NOT NULL
+        expires_at TIMESTAMP WITHOUT TIME ZONE NOT NULL
+        used       BOOLEAN NOT NULL
+        created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL
+    - CREATE UNIQUE INDEX IF NOT EXISTS ix_password_resets_token ON (token) — the
+      model declares unique=True, index=True, which SQLAlchemy renders as a unique
+      index under that name rather than a UNIQUE constraint.
+    - ALTER TABLE ... ADD CONSTRAINT password_resets_user_id_fkey FOREIGN KEY
+      (user_id) REFERENCES users(id) ON DELETE CASCADE, guarded by a pg_constraint
+      conname lookup (PostgreSQL has no ADD CONSTRAINT IF NOT EXISTS).
+    
+    Verification (scratch PostgreSQL 16, disposable)
+    - pre-existing schema: revision is a no-op; table, PK, FK and unique index
+      unchanged; seeded user row preserved.
+    - fresh schema: table created with the exact column types/nullability above,
+      PK + FK (ON DELETE CASCADE) + unique index; pg_dump --schema-only is identical
+      to the create_all-built reference for this table.
+    
+    Verification (real stack)
+    - Existing dev DB: docker compose down && up -d succeeded;
+      "Running upgrade tb0002_items_provenance_columns -> tb0003_password_resets";
+      guard logged "Database schema revision: tb0003_password_resets";
+      alembic current and alembic heads both show the new revision (single head);
+      row counts unchanged (baselines=6, items=6348, users=3, projects=9); ORM
+      probe 9/9.
+    - Fresh DB: docker compose down -v && up -d applied the full chain from base.
+      All 9 ORM probes pass, including PasswordReset — the runtime-breaking gap
+      count on a freshly migrated database is now zero.
+
+commit dd1a9a2fa2748e326b6c848613e6635d3f706162
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 13 11:30:52 2026 +0300
+
+    traceboard: add items provenance columns (guarded forward migration)
+    
+    Gap: four Item columns are declared in app/models/__init__.py and exist in every
+    database created by the legacy Base.metadata.create_all path, but no Alembic
+    revision ever created them. A fresh install therefore lacks all four and every
+    code path that reads them fails at runtime:
+    
+      asyncpg.exceptions.UndefinedColumnError: column items.verification_status does not exist
+    
+    Affected call sites: app/routers/events.py (item serialisation),
+    app/routers/reports.py (verification status column), app/routers/import_export.py
+    (source_id / parent_source_id / normative_strength export).
+    
+    Migration tb0002_items_provenance_columns (Revises: tb0001_baselines_display_id)
+    - verification_status VARCHAR(20) NOT NULL DEFAULT 'UNTESTED'
+    - source_id          VARCHAR(50) NULL
+    - parent_source_id   VARCHAR(50) NULL
+    - normative_strength VARCHAR(10) NULL
+    - CREATE INDEX ix_items_source_id ON items (source_id)
+    
+    Guards: each ADD COLUMN is wrapped in a DO block with an
+    information_schema.columns existence check, so an existing database is a no-op;
+    the index uses CREATE INDEX IF NOT EXISTS.
+    
+    normative_strength is deliberately not a native PostgreSQL enum. The model
+    declares SqlEnum(NormativeStrength), but the live column is a plain VARCHAR(10)
+    holding the uppercase member names (SHALL / SHOULD / MAY). The migrated schema
+    must match the live schema; the model-vs-schema divergence is tracked
+    separately. No CHECK constraint is added.
+    
+    Verification (scratch PostgreSQL 16, disposable)
+    - pre-existing schema: revision is a no-op; all four columns and the index
+      unchanged; seeded item row preserved.
+    - fresh schema: all four columns created with the exact types above
+      (verification_status NOT NULL, the rest nullable) plus ix_items_source_id.
+    
+    Verification (real stack)
+    - Existing dev DB: docker compose down && up -d succeeded;
+      "Running upgrade tb0001_baselines_display_id -> tb0002_items_provenance_columns";
+      guard logged "Database schema revision: tb0002_items_provenance_columns";
+      alembic current and alembic heads both show the new revision (single head);
+      row counts unchanged (baselines=6, items=6348, users=3, projects=9) and all
+      135 normative_strength values preserved; ORM probe 9/9.
+    - Fresh DB: docker compose down -v && up -d applied the full chain from base;
+      ORM probes for all four columns now pass (were UndefinedColumnError).
+
+commit 9d78a5afeb37b451ba876b5c0219014465d74a0d
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 13 11:26:31 2026 +0300
+
+    traceboard: add baselines.display_id (guarded forward migration)
+    
+    Gap: Baseline.display_id is declared in app/models/__init__.py:216 and exists in
+    every database created by the legacy Base.metadata.create_all path, but no
+    Alembic revision ever created it. A fresh install therefore lacks the column and
+    every code path that reads it fails at runtime:
+    
+      asyncpg.exceptions.UndefinedColumnError: column baselines.display_id does not exist
+    
+    Affected call sites: app/routers/audit.py (baseline label resolution),
+    app/routers/baselines.py (export), app/schemas.py.
+    
+    Migration tb0001_baselines_display_id (Revises: ded761bd21ac)
+    - ALTER TABLE baselines ADD COLUMN display_id VARCHAR(20), guarded by an
+      information_schema.columns existence check so an existing database is a no-op.
+    - ALTER TABLE baselines ADD CONSTRAINT baselines_display_id_key UNIQUE
+      (display_id), guarded by a pg_constraint conname lookup (PostgreSQL has no
+      ADD CONSTRAINT IF NOT EXISTS). This mirrors the model's unique=True exactly;
+      creating the constraint also creates its backing index, so no separate
+      CREATE INDEX is needed.
+    
+    Verification (scratch PostgreSQL 16, disposable)
+    - pre-existing schema: revision is a no-op; column, constraint and index
+      unchanged; seeded row preserved.
+    - fresh schema: column added as character varying(20) nullable, constraint
+      baselines_display_id_key created (contype=u).
+    
+    Verification (real stack)
+    - Existing dev DB: docker compose down && up -d succeeded;
+      "Running upgrade ded761bd21ac -> tb0001_baselines_display_id";
+      guard logged "Database schema revision: tb0001_baselines_display_id";
+      alembic current and alembic heads both show the new revision (single head);
+      row counts unchanged (baselines=6, items=6348, users=3, projects=9) and the
+      3 existing display_id values preserved.
+    - Fresh DB: docker compose down -v && up -d applied the full chain from base;
+      ORM probe for Baseline.display_id now passes (was UndefinedColumnError).
+
+commit 3c1f33d3b4f8688930c374ffda6578f406b0fd69
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 13 10:42:37 2026 +0300
+
+    prompt_log: Task 6 (TraceTest baseline migration idempotency fix)
+
+commit bea9887585964e2892d8c04d769bbbfcf748a213
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 13 10:41:47 2026 +0300
+
+    tracetest: make baseline migration idempotent for existing databases
+    
+    tt0001baseline aborted with DuplicateObjectError on any database whose
+    TraceTest tables predate it. The runtime DDL it was transcribed from was
+    idempotent (try/except around every ALTER TABLE ... ADD CONSTRAINT), so those
+    databases already carry all four foreign keys, and the baseline re-issued two
+    of them unguarded:
+    
+      asyncpg.exceptions.DuplicateObjectError: constraint "fk_test_evidence_run"
+      for relation "test_evidence" already exists
+    
+    Measured on the local dev database (docker compose up -d failed; the
+    tracetest-backend container exited 1) and applicable to every existing
+    TraceTest install, including the Demo server, whose tables predate the
+    baseline.
+    
+    Foreign keys
+    - Every ALTER TABLE ... ADD CONSTRAINT is now wrapped in a DO block that
+      checks pg_constraint for the exact constraint name before applying it:
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = '<name>').
+      A pre-existing constraint is left untouched; a missing one is still added.
+    - fk_test_evidence_run moves from an unguarded statement into that guard.
+    - fk_test_run_cases_run moves out of CREATE TABLE test_run_cases into a
+      guarded ALTER. CREATE TABLE IF NOT EXISTS is a no-op on a pre-existing
+      table, so an inline constraint would never be created for a legacy table
+      that lacks it. PostgreSQL stores both forms identically, so the resulting
+      schema is unchanged (verified by pg_dump --schema-only diff against the
+      runtime DDL: 188 lines, identical).
+    - The TraceBoard-owned guards (fk_test_runs_project -> projects,
+      fk_test_evidence_item -> items) keep their undefined_table NOTICE path for
+      standalone installs, now nested inside the conname check.
+    - Revision ID and down_revision are unchanged.
+    
+    Tables and indexes
+    - CREATE TABLE IF NOT EXISTS confirmed for all three tables; all seven
+      CREATE INDEX statements already carry IF NOT EXISTS.
+    
+    Tests
+    - New tests/test_baseline_migration_idempotency.py (11 tests) asserts that
+      every FK is guarded by its exact conname, that no ADD CONSTRAINT is issued
+      outside a pg_constraint guard, that no FK is inline in CREATE TABLE, that
+      all tables/indexes are created IF NOT EXISTS, that the legacy column
+      repairs stay idempotent, and that fk_test_run_cases_run is applied after
+      its table.
+    
+    Verification
+    - Scratch PostgreSQL 16 (disposable): legacy schema (runtime DDL) ->
+      baseline is a no-op, schema fingerprint and rows unchanged; partial legacy
+      schema -> missing FK and index are re-added; fresh suite install -> all
+      four FKs and 12 indexes; fresh standalone install -> TraceBoard-owned FKs
+      skipped with a NOTICE, no error.
+    - Existing dev database: docker compose down && docker compose up -d now
+      succeeds, guard logs "Database schema revision: tt0001baseline", all four
+      FKs intact (no duplicates), column order, indexes and row counts
+      unchanged.
+    - Fresh install: docker compose down -v && docker compose up -d applies the
+      baseline from base and all containers report healthy.
+    - pytest apps/tracetest/backend/tests: 65 passed.
+    
+    TraceBoard and TraceDocs are untouched by this commit.
+
+commit 8bbd3135c59a18977a6debacc925d5a7ce31ddc3
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 13 10:20:22 2026 +0300
+
+    chore: enforce LF for shell scripts and text files via .gitattributes
+    
+    Shell scripts with CRLF fail on Linux/container exec with ENOENT ('no such file or directory') because the shebang line is parsed as '#!/bin/sh\r'. Enforce LF for *.sh, *.py, Dockerfile*, *.yml, *.yaml, *.conf, *.md. Windows-only scripts (*.ps1, *.bat, *.cmd) keep CRLF.
+
+commit 5b8662398b85fb9125a2d84a7dc33c5fc2a1bcb3
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 13 09:41:27 2026 +0300
+
+    prompt_log: Task 5 Phases 2-3 (Alembic sole authority for TraceTest + TraceDocs)
+
+commit 3433f537e37ded9e69f52cf8fc2a07c4932cc2fd
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 13 09:40:50 2026 +0300
+
+    tracedocs: baseline migration + remove runtime DDL (Alembic as sole authority)
+    
+    Alembic becomes the only component allowed to create or alter TraceDocs'
+    schema (ADR-052). Previously app/main.py::_startup_db ran SQLAlchemy
+    create_all at startup, and alembic/versions/ could not reproduce the schema:
+    its root revision a1b2c3d4e5f6 only ALTERed `documents` (adding folder_id) and
+    never created it, so `alembic upgrade head` against a fresh database failed
+    with `relation "documents" does not exist`.
+    
+    Baseline migration (td0001baseline)
+    - New root of the TraceDocs graph; chain is now
+      td0001baseline -> a1b2c3d4e5f6 -> ... -> f6g7h8i9j0k1 (linear, single head).
+    - Creates `documents` with the exact columns and order of the live database:
+      id, project_id, folder_id, title, content, version, baseline_id,
+      is_generated, created_at, updated_at.  deleted_at (c3d4e5f6g7h) and
+      source_report_id/provenance (f6g7h8i9j0k1) are appended by those migrations,
+      which reproduces the live order exactly (verified).
+    - `folder_id` is a plain uuid column here (no FK): `folders` is created by
+      a1b2c3d4e5f6, which runs after this baseline.  The FK is added by
+      b2c3d4e5f6g7.
+    
+    Graph and idempotency changes
+    - a1b2c3d4e5f6: down_revision changed from None to 'td0001baseline'; upgrade()
+      now creates `folders` / `folder_id` / ix_documents_folder_id only when absent,
+      so it applies cleanly to databases that came from create_all.
+    - b2c3d4e5f6g7: creates the foreign key as `documents_folder_id_fkey` (the name
+      the live database actually carries, generated by SQLAlchemy from the model's
+      ForeignKey("folders.id")) instead of `fk_documents_folder_id_folders`, and
+      only when documents.folder_id has no FK at all.  The old name was never
+      present in the live database: this revision had been masked by the legacy
+      stamp and never actually ran.
+    - f6g7h8i9j0k1: adds source_report_id / provenance / ix_documents_source_report_id
+      only when absent.  Without this the legacy path failed with
+      `DuplicateColumnError: column "source_report_id" of relation "documents"
+      already exists`, because the Document model already declares those columns
+      and create_all had created them.
+    
+    document_item_links ownership
+    - TraceBoard remains the sole creator of `document_item_links` (its revision
+      x1b2c3d4e5fa).  The TraceDocs baseline deliberately omits it; the
+      DocumentItemLink model docstring now records that ownership.
+    - CAVEAT: a standalone TraceDocs deployment without the TraceBoard backend will
+      not have `document_item_links` until TraceBoard's migrations run.  In the
+      suite, docker-compose orders tracedocs-backend behind a healthy
+      traceboard-backend, so the table exists before TraceDocs starts.
+    
+    Runtime DDL removed
+    - app/main.py: _startup_db (create_all) replaced by _verify_schema_version(),
+      the same fail-fast guard TraceBoard and TraceTest use: RuntimeError when
+      alembic_version_tracedocs is missing or empty, or holds multiple heads; logs
+      the current revision otherwise.
+    - scripts/entrypoint.sh: the hand-rolled `INSERT INTO alembic_version_tracedocs`
+      legacy stamp is removed.  The script is now `alembic upgrade head` (singular,
+      stricter than `heads`) followed by exec uvicorn.  Legacy databases need a
+      one-time `alembic stamp head` instead — documented in docs/deployment.md.
+    - app/database.py: VERSION_TABLE constant added.
+    
+    Verification (disposable scratch databases, all dropped afterwards)
+    - Fresh install: full chain applies (previously failed at a1b2c3d4e5f6);
+      pg_dump --schema-only of documents/folders/branding is IDENTICAL to the live
+      database (165 lines, no differences), including the documents column order
+      ... is_generated, created_at, updated_at, deleted_at, source_report_id,
+      provenance.
+    - Legacy install: create_all schema + `alembic stamp e5f6g7h8i9j0` (what the
+      old entrypoint did) + `alembic upgrade head` now reaches f6g7h8i9j0k1
+      (previously DuplicateColumnError).
+    - End-to-end: entrypoint.sh on a fresh DB -> upgrade + app healthy
+      (/health 200), guard logs "Database schema revision: f6g7h8i9j0k1".
+    - Guard: unmanaged DB exits 3 with an actionable message.
+    - 32 unit tests pass (28 pre-existing + 4 new guard tests).
+
+commit 6f91a67e8022663b6397e28aeb23a5358ebd78f3
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 13 09:36:01 2026 +0300
+
+    tracetest: baseline migration + remove runtime DDL (Alembic as sole authority)
+    
+    Alembic becomes the only component allowed to create or alter TraceTest's
+    schema (ADR-052). Previously app/database.py::_run_migration() created and
+    patched test_runs, test_evidence and test_run_cases at pool-init time, outside
+    Alembic's tracking, while alembic/versions/ contained only .gitkeep.
+    
+    Baseline migration (tt0001baseline)
+    - Explicit SQL DDL transcribed verbatim from the removed _run_migration body,
+      so a fresh database produced by `alembic upgrade head` is byte-identical to
+      one produced by the old runtime DDL (verified: pg_dump --schema-only diff of
+      both, 188 lines, no differences).
+    - Statement order preserved, including the ALTER TABLE ... ADD COLUMN
+      IF NOT EXISTS statements that place test_runs.environment last.
+    - TraceBoard-owned FKs (fk_test_runs_project -> projects,
+      fk_test_evidence_item -> items) are added in guarded DO blocks that skip with
+      a NOTICE when the referenced table is absent — the same outcome as the old
+      try/except, but explicit and logged.
+    - A third, unused migration system (migrations/*.sql, 3 files) is deleted.
+    
+    Version-table isolation (latent bug)
+    - TraceTest had no effective version_table: alembic.ini did not set one and
+      env.py did not pass one, so Alembic used the shared `alembic_version` table
+      and read TraceBoard's revision IDs. `alembic current` failed with
+      "Can't locate revision identified by 'e1f2a3b4c5d6'", and TraceTest's own
+      revision would have been written into TraceBoard's version table.
+    - Fix: version_table="alembic_version_tracetest" is passed to
+      context.configure() in env.py. Setting it in alembic.ini alone is NOT
+      sufficient (verified against Alembic 1.14.1: an ini-only version_table still
+      creates the default alembic_version).
+    
+    Startup guard
+    - _verify_schema_version() mirrors TraceBoard's guard: fails fast (RuntimeError,
+      uvicorn exits non-zero) when alembic_version_tracetest is missing or empty,
+      or holds multiple heads; logs the current revision otherwise.
+    
+    Entrypoint
+    - TraceTest had no entrypoint at all (CMD ran uvicorn directly), so migrations
+      never ran on deploy. scripts/entrypoint.sh now runs `alembic upgrade head`
+      before exec'ing uvicorn; the Dockerfile copies it and uses it as CMD.
+    
+    Verification (disposable scratch databases, all dropped afterwards)
+    - pg_dump --schema-only diff: Alembic baseline == runtime DDL (identical).
+    - Fresh install: entrypoint.sh -> upgrade + app healthy (/health 200), guard
+      logs "Database schema revision: tt0001baseline".
+    - Existing install: stamp head + `alembic upgrade head` is a no-op; all 4 FKs
+      intact.
+    - Guard: unmanaged DB and multi-head DB both exit 3 with actionable messages.
+    - 54 unit tests pass (49 pre-existing + 5 new guard tests).
+
+commit 8d10b063882cd73a5fbd7cbb56286de93ae11236
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 13 08:51:09 2026 +0300
+
+    audit: deterministic ordering for same-timestamp events
+    
+    Two-part fix for a flake and a latent correctness bug in the item audit log:
+    
+    - Write path: audit entries now store a strictly-increasing changed_at
+      per item (max(utcnow(), latest + 1us)), so rapid transitions can never
+      share a timestamp. Prior behavior relied on datetime.utcnow, whose
+      ~15ms resolution on Windows (1.7-2.9ms measured) allowed ties.
+    
+    - Read path: add AuditLog.id.desc() as a secondary sort key in
+      GET /items/{id}/audit-log so concurrent writes with identical
+      timestamps still produce a stable order. uuid4 ids are not
+      time-ordered, so this is a stability tie-break, not a chronology fix.
+    
+    No schema change. New regression test freezes the clock to force ties
+    and asserts chronological newest-first ordering.
+
+commit 5219062d173aacd0c43fe88d1526b17cef4a3696
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 13 02:16:38 2026 +0300
+
+    main: fail-fast schema-version guard (Alembic as sole schema authority)
+    
+    Adds _verify_schema_version() to the backend startup path: fails fast if
+    alembic_version is missing, empty, or has multiple heads; logs the current
+    revision on success. Gated behind TRACEBOARD_DEV_AUTO_CREATE_SCHEMA for
+    local dev only.
+    
+    Also appends prompt_log entries for Tasks 2–4 (audit log; earlier commits
+    were code-only).
+    
+    Covers Task 4 and codifies ADR-052.
+
+commit 2ec92a4e064c67887b14d4ecbb547f0296f0ff99
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 13 01:50:51 2026 +0300
+
+    nginx: serve index.html only; remove the index-boot.html opt-in
+
+commit f3729317a43d3305132f36bf1a11d659bdcb17a0
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 13 00:53:24 2026 +0300
+
+    alembic: add head merge revision ded761bd21ac (regenerated, matches production stamp)
+
+commit 3d4f6e10ffba1d4f2a7ee7eeae048e165c52bd99
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sun Sep 13 00:25:11 2026 +0300
+
+    A lot of fixes to different issues found., Added massive project data and improved the import functionality.
+
+commit 29e95286c1040642111f932b25be8ff9bf01c349
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Sat Sep 12 01:58:04 2026 +0300
+
+    Significant GUI improvements (simpler, cleaner)
+    
+    Added project avatar and improved Guided tour
+
+commit e9e4e43717701a3a10c1fd3f1c37d5fb8993fd68
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Fri Sep 11 16:56:29 2026 +0300
+
+    Improved GUI (simpler, no clutter, professional)
+
+commit 3cd15736314cdd86edc10eddf638f0558ac69e9f
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Fri Sep 11 14:45:25 2026 +0300
+
+    Improved Risk Classification, Standard Switch and some other things
+
+commit 0b03a800366be0a7207ebb4d0ace428dce8db94c
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Fri Sep 11 01:51:20 2026 +0300
+
+    Significant improvements to TraceTest:
+    
+    Bulk ingestion
+    Create Test Run Dialog improvements
+    Risk/hazards connection to tracetest
+    TraceBoard:
+    Applicable Standard added to Project creation
+
+commit 147ee6d04e506d844aa4a23fd9b0c94609fa636c
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Thu Sep 10 15:42:09 2026 +0300
+
+    Added:
+    
+    TraceTest Delete confirmation added
+    TraceTest Result Provenance
+    TraceTest Flaky Test Detection
+    TraceTest Evindence Result wiring
+    TraceTest Risk/Hazard signals
+    TraceTest Environment metadata
+
+commit 44727d7dc82bd36938fe84afb5cf9a9f9bbbe89f
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 9 23:48:40 2026 +0300
+
+    Audit Narrative deterministic significant improvements
+
+commit 899ed2749df579facaa5a8ef3d3594cc498ca866
+Author: ristojarnstrom-gif <risto.jarnstrom@gmail.com>
+Date:   Wed Sep 9 01:45:41 2026 +0300
+
+    Mostly debug and verification of Audit Narrative. Now all Save buttons work correctly.

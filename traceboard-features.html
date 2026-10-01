@@ -163,6 +163,11 @@
   .closing .section-body{ margin:16px auto 0; text-align:center; }
   .cta-row{ margin-top:32px; display:flex; gap:14px; justify-content:center; }
 
+  .video-frame{ position:relative; width:100%; aspect-ratio:16 / 9; overflow:hidden; background:var(--navy-deep); border:1px solid var(--line-strong); }
+  .video-frame iframe{ display:block; width:100%; height:100%; border:0; }
+  .video-link{ margin-top:14px; color:var(--ink-soft); font-size:14px; text-align:center; }
+  .video-link a{ color:var(--navy); font-weight:600; }
+
   footer{ padding:28px 0; text-align:center; font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--ink-faint); }
 
   @media (max-width: 760px){
@@ -213,6 +218,11 @@
       verification — with standards-aware templates and assessments for teams working in regulated contexts.
       Here's what sets it apart from a disconnected spreadsheet workflow or heavyweight ALM rollout.
     </p>
+
+    <div class="cta-row" aria-label="Watch TraceBoard Suite videos">
+      <a href="index.html#walkthrough" class="btn btn-primary">Watch the product walkthrough</a>
+      <a href="index.html#installation" class="btn btn-secondary">See the 3-minute setup</a>
+    </div>
 
     <div class="quickfacts">
       <div class="quickfact">
